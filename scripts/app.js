@@ -26,6 +26,7 @@ Game.Loader = (function() {
 
   Loader.prototype.loaded = function() {
     me.state.set(me.state.PLAY, new Game.PlayScreen());
+    me.state.change(me.state.PLAY);
   }
 
   return Loader;
