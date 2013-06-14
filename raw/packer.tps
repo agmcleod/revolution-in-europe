@@ -22,7 +22,7 @@
         <key>dataFormat</key>
         <string>json-array</string>
         <key>textureFileName</key>
-        <filename>../../eu-chapter1/assets/images/ch1.png</filename>
+        <filename>../assets/images/ch1.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>ditherType</key>
@@ -111,7 +111,7 @@
             <enum type="AndEngine::MagFilter">MagLinear</enum>
         </struct>
         <key>dataFileName</key>
-        <filename>../../eu-chapter1/assets/images/ch1.json</filename>
+        <filename>../assets/images/ch1.json</filename>
         <key>mainExtension</key>
         <string></string>
         <key>forceIdenticalLayout</key>
@@ -147,6 +147,7 @@
         <key>fileList</key>
         <array>
             <filename>../../eu-chapter1/raw</filename>
+            <filename></filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

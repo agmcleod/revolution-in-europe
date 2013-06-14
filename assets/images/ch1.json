@@ -2,11 +2,19 @@
 
 {
 	"filename": "column.png",
-	"frame": {"x":2,"y":324,"w":32,"h":215},
-	"rotated": true,
+	"frame": {"x":2,"y":518,"w":32,"h":215},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":215},
 	"sourceSize": {"w":32,"h":215}
+},
+{
+	"filename": "subway.png",
+	"frame": {"x":2,"y":324,"w":478,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":478,"h":192},
+	"sourceSize": {"w":480,"h":192}
 },
 {
 	"filename": "tube.png",
@@ -21,8 +29,8 @@
 	"version": "1.0",
 	"image": "ch1.png",
 	"format": "RGBA8888",
-	"size": {"w":512,"h":512},
+	"size": {"w":512,"h":1024},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:c0be5563608fab3893a0187470261028$"
+	"smartupdate": "$TexturePacker:SmartUpdate:799866ccfac04564b7683a9b46012cb4$"
 }
 }
