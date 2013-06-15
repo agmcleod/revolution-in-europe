@@ -1,12 +1,13 @@
 Game.PlayScreen = me.ScreenObject.extend({
   draw: function(ctx) {
     this.background.draw(ctx);
+    this.train.draw(ctx);
     for(var i = 0; i < this.columns.length; i++) {
       this.columns[i].draw(ctx);
     }
   },
   init: function() {
-    this.parent(true, true);
+    this.parent(true);
     this.atlas = new me.TextureAtlas(me.loader.getAtlas("ch1"), me.loader.getImage("ch1"));
   },
   onDestroyEvent: function() {
@@ -17,8 +18,12 @@ Game.PlayScreen = me.ScreenObject.extend({
     var region = this.atlas.getRegion('tube.png');
     this.background.offset.setV(region.offset);
     this.background._sourceAngle = region.angle;
-
     this.setupColumns();
+    
+    this.train = new me.SpriteObject(-200, 72, this.atlas.texture, 480, 192);
+    region = this.atlas.getRegion('subway.png');
+    this.train.offset.setV(region.offset)
+    this.train._sourceAngle = region.angle;
   },
 
   setupColumns: function() {
@@ -33,5 +38,12 @@ Game.PlayScreen = me.ScreenObject.extend({
       col._sourceAngle = region.angle;
       me.game.add(col, 50);
     }
+  },
+
+  update: function() {
+    if(this.train.pos.x < -20)
+      this.train.pos.x += 10;
+
+    return true;
   }
 });
