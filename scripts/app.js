@@ -4,7 +4,7 @@ Game.Loader = (function() {
   var Loader = function() {
     this.resources = [{
       name: 'ch1',
-      type:'json',
+      type:'tps',
       src: 'assets/images/ch1.json'
     }, {
       name: 'ch1',

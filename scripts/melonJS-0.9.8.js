@@ -13,7 +13,7 @@
  * You generally should not add new properties to this namespace as it may be overwritten in future versions.
  * @namespace
  */
-window.me = window.me || {};
+var me = me || {};
 
 (function($) {
 	// Use the correct document accordingly to window argument
@@ -138,6 +138,14 @@ window.me = window.me || {};
 		 * @memberOf me.sys
 		 */
 		gravity : undefined,
+
+		/**
+		 * Use native "requestAnimFrame" function if supported <br>
+		 * fallback to clearInterval if not supported by the browser<br>
+		 * @type Boolean
+		 * @memberOf me.sys
+		 */
+		useNativeAnimFrame : false,
 
 		/**
 		 * cache Image using a Canvas element, instead of directly using the Image Object<br>
@@ -519,40 +527,6 @@ window.me = window.me || {};
 			return bound;
 		};
 	}
-
-	if (!window.throttle) {
-		/**
-		 * a simple throttle function 
-		 * use same fct signature as the one in prototype
-		 * in case it's already defined before
-		 * @ignore
-		 */
-		window.throttle = function( delay, no_trailing, callback, debounce_mode ) {
-			var last = Date.now(), deferTimer;
-			// `no_trailing` defaults to false.
-			if ( typeof no_trailing !== 'boolean' ) {
-			  no_trailing = false;
-			}
-			return function () {
-				var now = Date.now();
-				var elasped = now - last;
-				var args = arguments;
-				if (elasped < delay) {
-					if (no_trailing === false) {
-						// hold on to it
-						clearTimeout(deferTimer);
-						deferTimer = setTimeout(function () {
-							last = now;
-							return callback.apply(null, args);
-						}, elasped);
-					}
-				} else {
-					last = now;
-					return callback.apply(null, args);
-				}
-			}
-		};
-	};
 	
 	
 	if (typeof Date.now === "undefined") {
@@ -813,17 +787,11 @@ window.me = window.me || {};
 		// detect audio capabilities
 		me.audio.detectCapabilities();
 		
-		// future proofing (MS) feature detection
-		navigator.pointerEnabled = navigator.pointerEnabled || navigator.msPointerEnabled;
-		navigator.maxTouchPoints = navigator.maxTouchPoints || navigator.msMaxTouchPoints || 0;
-		window.gesture = window.gesture || window.MSGesture;
-		
 		// detect touch capabilities
-		me.sys.touch = ('createTouch' in document) || ('ontouchstart' in $) || 
-		               (navigator.isCocoonJS) || (navigator.maxTouchPoints > 0);
+		me.sys.touch = ('createTouch' in document) || ('ontouchstart' in $) || (navigator.isCocoonJS);
 		
 		// detect platform
-		me.sys.isMobile = me.sys.ua.match(/Android|iPhone|iPad|iPod|BlackBerry|Windows Phone|Mobile/i);
+		me.sys.isMobile = me.sys.ua.match(/Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i);
 
 		// init the FPS counter if needed
 		me.timer.init();
@@ -2590,29 +2558,17 @@ window.me = window.me || {};
 		
 		/**
 		 * check if this rectangle contains the specified point
-		 * @name containsPointV
+		 * @name containsPoint
 		 * @memberOf me.Rect
 		 * @function
 		 * @param  {me.Vector2d} point
 		 * @return {boolean} true if contains
 		 */
-		containsPointV: function(v) {
-			return this.containsPoint(v.x, v.y);
+		containsPoint: function(v) {
+			return  (v.x >= this.left && v.x <= this.right && 
+					(v.y >= this.top) && v.y <= this.bottom)
 		},
 
-		/**
-		 * check if this rectangle contains the specified point
-		 * @name containsPoint
-		 * @memberOf me.Rect
-		 * @function
-		 * @param  {Number} x x coordinate
-		 * @param  {Number} y y coordinate
-		 * @return {boolean} true if contains
-		 */
-		containsPoint: function(x, y) {
-			return  (x >= this.left && x <= this.right && 
-					(y >= this.top) && y <= this.bottom)
-		},
 
 		/**
 		 * AABB vs AABB collission dectection<p>
@@ -2776,7 +2732,7 @@ window.me = window.me || {};
 		 * to identify the object as a renderable object
 		 * @ignore
 		 */
-		isRenderable : true,
+		isRenderable: true,
 		
 		/**
 		 * the visible state of the renderable object<br>
@@ -2813,6 +2769,7 @@ window.me = window.me || {};
 		 * make the renderable object persistent over level changes<br>
 		 * default value : false
 		 * @public
+		 * @readonly
 		 * @type Boolean
 		 * @name isPersistent
 		 * @memberOf me.Renderable
@@ -2828,17 +2785,7 @@ window.me = window.me || {};
 		 * @name floating
 		 * @memberOf me.Renderable
 		 */
-		floating : false,
-
-		/**
-		 * Z-order for object sorting<br>
-		 * default value : 0
-		 * @private
-		 * @type Number
-		 * @name z
-		 * @memberOf me.Renderable
-		 */
-		z : 0,
+		floating: false,
 
 		/**
 		 * @ignore
@@ -2981,7 +2928,7 @@ window.me = window.me || {};
 
 			// scale factor of the object
 			this.scale = new me.Vector2d(1.0, 1.0);
-			this.lastflipX = this.lastflipY = false;
+			this.lastflipX = this.lastflipY = false,
 			this.scaleFlag = false;
 
 			// set the default sprite index & offset
@@ -3421,28 +3368,14 @@ window.me = window.me || {};
 		 * @example
 		 * // set "walk" animation
 		 * this.setCurrentAnimation("walk");
-		 *
 		 * // set "eat" animation, and switch to "walk" when complete
 		 * this.setCurrentAnimation("eat", "walk");
-		 *
 		 * // set "die" animation, and remove the object when finished
 		 * this.setCurrentAnimation("die", (function () {
 		 *    me.game.remove(this);
-		 *	  return false; // do not reset to first frame
-		 * }).bind(this));
-		 *
-		 * // set "attack" animation, and pause for a short duration
-		 * this.setCurrentAnimation("die", (function () {
-		 *    this.animationpause = true;
-		 *
-		 *    // back to "standing" animation after 1 second
-		 *    setTimeout(function () {
-		 *        this.setCurrentAnimation("standing");
-		 *    }, 1000);
-		 *
-		 *	  return false; // do not reset to first frame
 		 * }).bind(this));
 		 **/
+
 		setCurrentAnimation : function(name, resetAnim) {
 			if (this.anim[name]) {
 				this.current = this.anim[name];
@@ -3521,11 +3454,8 @@ window.me = window.me || {};
 					if (typeof(this.resetAnim) == "string")
 						this.setCurrentAnimation(this.resetAnim);
 					// if function (callback) call it
-					else if (typeof(this.resetAnim) == "function" && this.resetAnim() === false) {
-						this.current.idx = this.current.length - 1;
-						this.parent();
-						return false;
-					}
+					else if (typeof(this.resetAnim) == "function")
+						this.resetAnim();
 				}
 				return this.parent() || true;
 			}
@@ -3555,20 +3485,17 @@ window.me = window.me || {};
 	var nhPI = -(Math.PI / 2);
 
 	/**
-	 * A Texture atlas object<br>
-	 * Currently support : <br>
-	 * - [TexturePacker]{@link http://www.codeandweb.com/texturepacker/} : through JSON export <br>
-	 * - [ShoeBox]{@link http://renderhjs.net/shoebox/} : through JSON export using the melonJS setting [file]{@link https://github.com/melonjs/melonJS/raw/master/media/shoebox_JSON_export.sbx}
+	 * A Texture atlas object.
 	 * @class
 	 * @extends Object
 	 * @memberOf me
 	 * @constructor
-	 * @param {Object} atlas atlas information. See {@link me.loader#getJSON}
+	 * @param {Object} atlas atlas information. See {@link me.loader#getAtlas}
 	 * @param {Image} [texture=atlas.meta.image] texture name
 	 * @example
 	 * // create a texture atlas
 	 * texture = new me.TextureAtlas (
-	 *    me.loader.getJSON("texture"), 
+	 *    me.loader.getAtlas("texture"), 
 	 *    me.loader.getImage("texture")
 	 * );
 	 */
@@ -3597,28 +3524,16 @@ window.me = window.me || {};
 		 * @ignore
 		 */
 		init : function(atlas, texture) {
-			if (atlas && atlas.meta) {
-				// Texture Packer
-				if (atlas.meta.app.contains("texturepacker")) {
-					this.format = "texturepacker";
-					// set the texture
-					if (texture===undefined) {
-						var name = me.utils.getBasename(atlas.meta.image);
-						this.texture = me.loader.getImage(name);
-						if (this.texture === null) {
-							throw "melonjs: Atlas texture '" + name + "' not found";
-						}
-					} else {
-						this.texture = texture;
+			if (atlas && atlas.meta && atlas.meta.app.contains("texturepacker")) {
+				this.format = "texturepacker";
+				// set the texture
+				if (texture===undefined) {
+					var name = me.utils.getBasename(atlas.meta.image);
+					this.texture = me.loader.getImage(name);
+					if (this.texture === null) {
+						throw "melonjs: Atlas texture '" + name + "' not found";
 					}
-				}
-				// ShoeBox
-				if (atlas.meta.app.contains("ShoeBox")) {
-					if (!atlas.meta.exporter || !atlas.meta.exporter.contains("melonJS")) {
-						throw "melonjs: ShoeBox requires the JSON exporter : https://github.com/melonjs/melonJS/tree/master/media/shoebox_JSON_export.sbx";
-					}
-					this.format = "ShoeBox";
-					// set the texture
+				} else {
 					this.texture = texture;
 				}
 				// initialize the atlas
@@ -3637,23 +3552,20 @@ window.me = window.me || {};
 		initFromTexturePacker : function (data) {
 			var atlas = {};
 			data.frames.forEach(function(frame) {
-				// fix wrongly formatted JSON (e.g. last dummy object in ShoeBox)
-				if (frame.hasOwnProperty("filename")) {
-					atlas[frame.filename] = {
-						frame: new me.Rect( 
-							new me.Vector2d(frame.frame.x, frame.frame.y),
-							frame.frame.w, frame.frame.h
-						),
-						source: new me.Rect(
-							new me.Vector2d(frame.spriteSourceSize.x, frame.spriteSourceSize.y),
-							frame.spriteSourceSize.w, frame.spriteSourceSize.h
-						),
-						// non trimmed size, but since we don't support trimming both value are the same
-						//sourceSize: new me.Vector2d(frame.sourceSize.w,frame.sourceSize.h),
-						rotated : frame.rotated===true,
-						trimmed : frame.trimmed===true
-					};
-				}
+				atlas[frame.filename] = {
+					frame: new me.Rect( 
+						new me.Vector2d(frame.frame.x, frame.frame.y),
+						frame.frame.w, frame.frame.h
+					),
+					source: new me.Rect(
+						new me.Vector2d(frame.spriteSourceSize.x, frame.spriteSourceSize.y),
+						frame.spriteSourceSize.w, frame.spriteSourceSize.h
+					),
+					// non trimmed size, but since we don't support trimming both value are the same
+					//sourceSize: new me.Vector2d(frame.sourceSize.w,frame.sourceSize.h),
+					rotated : frame.rotated===true,
+					trimmed : frame.trimmed===true
+				};
 			});
 			return atlas;
 		},
@@ -3702,7 +3614,7 @@ window.me = window.me || {};
 		 * @example
 		 * // create a new texture atlas object under the `game` namespace
 		 * game.texture = new me.TextureAtlas(
-		 *    me.loader.getJSON("texture"), 
+		 *    me.loader.getAtlas("texture"), 
 		 *    me.loader.getImage("texture")
 		 * );
 		 * ...
@@ -3746,7 +3658,7 @@ window.me = window.me || {};
 		 * @example
 		 * // create a new texture atlas object under the `game` namespace
 		 * game.texture = new me.TextureAtlas(
-		 *    me.loader.getJSON("texture"), 
+		 *    me.loader.getAtlas("texture"), 
 		 *    me.loader.getImage("texture")
 		 * );
 		 * ...
@@ -4205,33 +4117,7 @@ window.me = window.me || {};
 		},
 
 		/**
-		 * convert the given screen coordinates into world coordinates
-		 * @name screenToWorld
-		 * @memberOf me.Viewport
-		 * @function
-		 * @param {Number} x
-		 * @param {Number} y
-		 * @return {me.Vector2d}
-		 */
-		screenToWorld : function(x, y) {
-			return (new me.Vector2d(x,y)).add(this.pos).sub(me.game.currentLevel.pos);
-		},
-		
-		/**
-		 * convert the given world coordinates into screen coordinates
-		 * @name worldToScreen
-		 * @memberOf me.Viewport
-		 * @function
-		 * @param {Number} x
-		 * @param {Number} y
-		 * @return {me.Vector2d}
-		 */
-		worldToScreen : function(x, y) {
-			return (new me.Vector2d(x,y)).add(this.pos).add(me.game.currentLevel.pos);
-		},
-		
-		/**
-		 * render the camera effects
+		 *	render the camera effects
 		 * @ignore
 		 */
 		draw : function(context) {
@@ -4258,7 +4144,7 @@ window.me = window.me || {};
 					this._fadeOut.tween = null;
 			}
 		}
-		
+
 	});
 
 	/*---------------------------------------------------------*/
@@ -4576,7 +4462,7 @@ window.me = window.me || {};
 	 * or when calling the parent constructor
 	 *
 	 * @class
-	 * @extends me.Renderable
+	 * @extends me.Rect
 	 * @memberOf me
 	 * @constructor
 	 * @param {int} x the x coordinates of the sprite object
@@ -4634,9 +4520,8 @@ window.me = window.me || {};
 		 */
 		renderable : null,
 		
-		// just to keep track of when we flip
-		lastflipX : false,
-		lastflipY : false,
+		// z position (for ordering display)
+		z : 0,
 		
 		
 		/** @ignore */
@@ -4792,20 +4677,20 @@ window.me = window.me || {};
 			this.disableTopLadderCollision = false;
 
 			// to enable collision detection			
-			this.collidable = typeof(settings.collidable) !== "undefined" ?	settings.collidable : true;
-			
-			// default objec type
+			this.collidable = typeof(settings.collidable) !== "undefined" ?
+				settings.collidable : true;
+			//this.collectable = false;
+
 			this.type = settings.type || 0;
 			
-			// default flip value
-			this.lastflipX = this.lastflipY = false;
-			
+
 			// ref to the collision map
 			this.collisionMap = me.game.collisionMap;
 			
 			// create a a default collision rectangle
 			this.collisionBox = new me.Rect(this.pos, this.width, this.height);
 			
+			// to know if our object can break tiles
 			/**
 			 * Define if an entity can go through breakable tiles<br>
 			 * default value : false<br>
@@ -4916,11 +4801,11 @@ window.me = window.me || {};
 		 */
 		flipX : function(flip) {
 			if (flip != this.lastflipX) {
-				this.lastflipX = flip;
-				if (this.renderable && this.renderable.flipX) {
+				if (this.renderable) {
 					// flip the animation
 					this.renderable.flipX(flip);
 				}
+
 				// flip the collision box
 				this.collisionBox.flipX(this.width);
 			}
@@ -4935,8 +4820,7 @@ window.me = window.me || {};
 		 */
 		flipY : function(flip) {
 			if (flip != this.lastflipY) {
-				this.lastflipY = flip;
-				if (this.renderable  && this.renderable.flipY) {
+				if (this.renderable) {
 					// flip the animation
 					this.renderable.flipY(flip);
 				}
@@ -5564,7 +5448,7 @@ window.me = window.me || {};
 	 * @memberOf me
 	 * @constructor
 	 * @param {Boolean} [addAsObject] add the object in the game manager object pool<br>
-	 * @param {Boolean} [isPersistent] make the screen persistent over level changes; requires addAsObject=true<br>
+	 * @param {Boolean} [isPersistent] make the screen persistent over level changes<br>
 	 * @see me.state
 	 * @example
 	 * // create a custom loading screen
@@ -5647,21 +5531,8 @@ window.me = window.me || {};
 	/** @scope me.ScreenObject.prototype */	
 	{
 		/** @ignore */
-		addAsObject : false,
+		addAsObject	: false,
 		/** @ignore */
-		visible : false,
-		/** @ignore */
-		frame : 0,
-
-		/**
-		 * Z-order for object sorting<br>
-		 * only used by the engine if the object has been initialized using addAsObject=true<br>
-		 * default value : 999
-		 * @private
-		 * @type Number
-		 * @name z
-		 * @memberOf me.ScreenObject
-		 */
 		z : 999,
 
 		/**
@@ -5682,10 +5553,6 @@ window.me = window.me || {};
 
 			// reset the game manager
 			me.game.reset();
-			
-			// reset the frame counter
-			this.frame = 0;
-			this.frameRate = Math.round(60/me.sys.fps);
 
 			// call the onReset Function
 			this.onResetEvent.apply(this, arguments);
@@ -5718,7 +5585,7 @@ window.me = window.me || {};
 		/**
 		 * update function<br>
 		 * optional empty function<br>
-		 * only used by the engine if the object has been initialized using addAsObject=true<br>
+		 * only used by the engine if the object has been initialized using addAsObject parameter set to true<br>
 		 * @name update
 		 * @memberOf me.ScreenObject
 		 * @function
@@ -5732,9 +5599,10 @@ window.me = window.me || {};
 		 *       //call the parent constructor giving true
 		 *       //as parameter, so that we use the update & draw functions
 		 *       this.parent(true);
-		 *       // ...
+		 *       ...
+		 *       ...
 		 *     },
-		 *     // ...
+		 *     ...
 		 * });
 		 */
 		update : function() {
@@ -5746,29 +5614,23 @@ window.me = window.me || {};
 		 * @ignore
 		 */
 		onUpdateFrame : function() {
-			// handle frame skipping if required
-			if (!(++this.frame%this.frameRate)) {
-				// reset the frame counter
-				this.frame = 0;
-				
-				// update the timer
-				me.timer.update();
+			// update the frame counter
+			me.timer.update();
 
-				// update all games object
-				me.game.update();
+			// update all games object
+			me.game.update();
 
-				// draw the game objects
-				me.game.draw();
+			// draw the game objects
+			me.game.draw();
 
-				// blit our frame
-				me.video.blitSurface();
-			}
+			// blit our frame
+			me.video.blitSurface();
 		},
 
 		/**
 		 * draw function<br>
 		 * optional empty function<br>
-		 * only used by the engine if the object has been initialized using addAsObject=true<br>
+		 * only used by the engine if the object has been initialized using addAsObject parameter set to true<br>
 		 * @name draw
 		 * @memberOf me.ScreenObject
 		 * @function
@@ -5782,9 +5644,10 @@ window.me = window.me || {};
 		 *       //call the parent constructor giving true
 		 *       //as parameter, so that we use the update & draw functions
 		 *       this.parent(true);
-		 *       // ...
+		 *       ...
+		 *       ...
 		 *     },
-		 *     // ...
+		 *     ...
 		 * });
 		 */
 		draw : function() {
@@ -5819,42 +5682,6 @@ window.me = window.me || {};
 
 	});
 
-	// based on the requestAnimationFrame polyfill by Erik Möller
-	(function() {
-		var lastTime = 0;
-		var vendors = ['ms', 'moz', 'webkit', 'o'];
-		// get unprefixed rAF and cAF, if present
-		var requestAnimationFrame = window.requestAnimationFrame;
-		var cancelAnimationFrame = window.cancelAnimationFrame;
-		for(var x = 0; x < vendors.length; ++x) {
-			if ( requestAnimationFrame && cancelAnimationFrame ) {
-				break;
-			}
-			requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-			cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] ||
-								   window[vendors[x]+'CancelRequestAnimationFrame'];
-		}
-
-		if (!requestAnimationFrame || !cancelAnimationFrame) {
-			requestAnimationFrame = function(callback, element) {
-				var currTime = Date.now();
-				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-				var id = window.setTimeout(function() { 
-					callback(currTime + timeToCall); 
-				}, timeToCall);
-				lastTime = currTime + timeToCall;
-				return id;
-			};
-
-			cancelAnimationFrame = function(id) {
-				window.clearTimeout(id);
-			};
-		}
-		
-		 // put back in global namespace
-		window.requestAnimationFrame = requestAnimationFrame;
-		window.cancelAnimationFrame = cancelAnimationFrame;
-	}());
 
 	
 	/**
@@ -5866,6 +5693,32 @@ window.me = window.me || {};
 
 	me.state = (function() {
 		
+		// list of vendors prefix (note : last modernizr version has
+		// a getPrefix function that makes this cleaner and more generic
+		var vendors = ['ms', 'moz', 'webkit', 'o'];
+		
+		// polyfill for RequestAnimationFrame (based on Erik Möller polyfill)
+		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+			window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+			window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+		};
+		
+		if (!window.requestAnimationFrame) {
+			window.requestAnimationFrame = function(callback, element) {
+				// TODO : allow to run at a lower rate than 60fps with requestAnimationFrame by skipping frame
+				// TODO : integrate setInterval directly here as a fallback
+				// (for next version, I plan to review the whole main loop mechanism, so I don't do it now) 
+				// in melonJS if this returns -1 clearInterval is used
+				return -1;
+			};
+        };
+		
+		if (!window.cancelAnimationFrame) {
+			window.cancelAnimationFrame = function() {
+				return -1;
+			};
+		};
+		
 		// hold public stuff in our singleton
 		var obj = {};
 
@@ -5875,7 +5728,8 @@ window.me = window.me || {};
 
 		// current state
 		var _state = -1;
-
+		// SetInterval Id
+		var _intervalId = -1;
 		// requestAnimeFrame Id
 		var _animFrameId = -1;
 
@@ -5902,14 +5756,29 @@ window.me = window.me || {};
 		 * @ignore
 		 */
 		function _startRunLoop() {
-			// ensure nothing is running first && valid state
-			if ((_animFrameId === -1) && (_state !== -1)) {
+			// ensure nothing is running first
+			if ((_intervalId == -1) && (_animFrameId == -1)) {
 
 				// reset the timer
 				me.timer.reset();
 
 				// start the main loop
-				_animFrameId = window.requestAnimationFrame(_renderFrame);
+				if (me.sys.useNativeAnimFrame) {
+					// attempt to setup the game loop using requestAnimationFrame
+					_animFrameId = window.requestAnimationFrame(_renderFrame);
+
+					if (_animFrameId != -1) {
+						return;
+					}
+					// else feature not supported !
+
+					// disable use of requestAnimationFrame (since unsupported)
+					me.sys.useNativeAnimFrame = false;
+					//console.log("using setInterval as fallback ("+_animFrameId+")");
+				}
+
+				// setup the game loop using setInterval
+				_intervalId = setInterval(_activeUpdateFrame, ~~(1000 / me.sys.fps));
 			}
 		};
 
@@ -5919,7 +5788,11 @@ window.me = window.me || {};
 		 */
 		function _renderFrame() {
 			_activeUpdateFrame();
-			_animFrameId = window.requestAnimationFrame(_renderFrame);
+			// we already checked it was supported earlier
+			// so no need to do it again here
+			if (_animFrameId != -1) {
+				_animFrameId = window.requestAnimationFrame(_renderFrame);
+			}
 		};
 
 		/**
@@ -5927,9 +5800,17 @@ window.me = window.me || {};
 		 * @ignore
 		 */
 		function _stopRunLoop() {
+			// cancel any previous setInterval
+			if (_intervalId != -1) {
+				clearInterval(_intervalId);
+				_intervalId = -1;
+			}
 			// cancel any previous animationRequestFrame
-			window.cancelAnimationFrame(_animFrameId);
-			_animFrameId = -1;
+			if (_animFrameId != -1) {
+				window.cancelAnimationFrame(_animFrameId);
+				_animFrameId = -1;
+			}
+
 		};
 
 		/**
@@ -6156,7 +6037,7 @@ window.me = window.me || {};
 		 * @param {Boolean} true if a "process is running"
 		 */
 		obj.isRunning = function() {
-			return (_animFrameId !== -1)
+			return ((_intervalId != -1) || (_animFrameId != -1))
 		};
 
 		/**
@@ -6416,8 +6297,6 @@ window.me = window.me || {};
 		var binList = {};
 		// contains all the texture atlas files
 		var atlasList = {};
-		// contains all the JSON files
-		var jsonList = {};
 		// flag to check loading status
 		var resourceCount = 0;
 		var loadCount = 0;
@@ -6564,7 +6443,7 @@ window.me = window.me || {};
 					// (With Chrome use "--allow-file-access-from-files --disable-web-security")
 					if ((xmlhttp.status==200) || ((xmlhttp.status==0) && xmlhttp.responseText)){
 						// get the Texture Packer Atlas content
-						jsonList[data.name] = JSON.parse(xmlhttp.responseText);
+						atlasList[data.name] = JSON.parse(xmlhttp.responseText);
 						// fire the callback
 						onload();
 					} else {
@@ -6699,8 +6578,8 @@ window.me = window.me || {};
 		 *   {name: "cling",   type: "audio",  src: "data/audio/",  channel: 2},
 		 *   // binary file
 		 *   {name: "ymTrack", type: "binary", src: "data/audio/main.ym"},
-		 *   // JSON file (used for texturePacker) 
-		 *   {name: "texture", type: "json", src: "data/gfx/texture.json"}
+		 *   // texturePacker
+		 *   {name: "texture", type: "tps", src: "data/gfx/texture.json"}
 		 * ];
 		 * ...
 		 *
@@ -6720,7 +6599,7 @@ window.me = window.me || {};
 		 * Load a single resource (to be used if you need to load additional resource during the game)<br>
 		 * Given parmeter must contain the following fields :<br>
 		 * - name    : internal name of the resource<br>
-		 * - type    : "audio", binary", "image", "json", "tmx", "tsx"
+		 * - type    : "binary", "image", "tmx", "tsx", "audio", "tps"
 		 * - src     : path and file name of the resource<br>
 		 * (!) for audio :<br>
 		 * - src     : path (only) where resources are located<br>
@@ -6762,8 +6641,8 @@ window.me = window.me || {};
 					// reuse the preloadImage fn
 					preloadImage.call(this, res, onload, onerror);
 					return 1;
-
-				case "json":
+				
+				case "tps":
 					preloadJSON.call(this, res, onload, onerror);
 					return 1;
 
@@ -6814,11 +6693,11 @@ window.me = window.me || {};
 					delete imgList[res.name];
 					return true;
 
-				case "json":
-					if(!(res.name in jsonList))
+				case "tps":
+					if (!(res.name in atlasList))
 						return false;
 
-					delete jsonList[res.name];
+					delete atlasList[res.name];
 					return true;
 					
 				case "tmx":
@@ -6862,10 +6741,6 @@ window.me = window.me || {};
 			
 			// unload all atlas resources
 			for (name in atlasList)
-				obj.unload(name);
-
-			// unload all in json resources
-			for (name in jsonList)
 				obj.unload(name);
 
 			// unload all audio resources
@@ -6933,6 +6808,26 @@ window.me = window.me || {};
 			}
 
 		};
+		
+		/**
+		 * return the specified Atlas object
+		 * @name getAtlas
+		 * @memberOf me.loader
+		 * @public
+		 * @function
+		 * @param {String} name of the atlas object;
+		 * @return {Object} 
+		 */
+		obj.getAtlas = function(elt) {
+			// avoid case issue
+			elt = elt.toLowerCase();
+			if (elt in atlasList)
+				return atlasList[elt];
+			else {
+				//console.log ("warning %s resource not yet loaded!",name);
+				return null;
+			}
+		};
 
 
 		/**
@@ -6967,25 +6862,6 @@ window.me = window.me || {};
 			}
 
 		};
-
-		/**
-		 * return the specified JSON Object
-		 * @name getJSON
-		 * @memberOf me.loader
-		 * @public
-		 * @function
-		 * @param {String} Name for the json file to load
-		 * @return {Object} 
-		 */
-		obj.getJSON = function(elt) {
-			elt = elt.toLowerCase();
-			if(elt in jsonList) {
-				return jsonList[elt];
-			}
-			else {
-				return null;
-			}
-		}
 
 		/**
 		 * Return the loading progress in percent
@@ -7369,15 +7245,13 @@ window.me = window.me || {};
 				for ( var c = 0,len = string.length; c < len; c++) {
 					// calculate the char index
 					var idx = string.charCodeAt(c) - this.firstChar;
-					if (idx >= 0) {
-						// draw it
-						context.drawImage(this.font,
+					// draw it
+					context.drawImage(this.font,
 							this.size.x * (idx % this.charCount), 
 							this.size.y * ~~(idx / this.charCount), 
 							this.size.x, this.size.y, 
 							~~x, ~~y, 
 							this.sSize.x, this.sSize.y);
-					}
 					x += this.sSize.x;
 				}
 				// increment line
@@ -7468,7 +7342,7 @@ window.me = window.me || {};
 			this.floating = true;
 			
 			// register on mouse event
-			me.input.registerPointerEvent('mousedown', this, this.clicked.bind(this));
+			me.input.registerMouseEvent('mousedown', this, this.clicked.bind(this));
 
 		},
 
@@ -7520,7 +7394,7 @@ window.me = window.me || {};
 		 * @function
 		 */
 		onDestroyEvent : function() {
-			me.input.releasePointerEvent('mousedown', this);
+			me.input.releaseMouseEvent('mousedown', this);
 		}
 
 	});
@@ -8932,8 +8806,13 @@ window.me = window.me || {};
 		 * @return {me.Vector2d}
 		 */
 		api.getPos = function(c) {
-			var c = c || canvas;
-			return c.getBoundingClientRect?c.getBoundingClientRect():{left:0,top:0};
+			var obj = c || canvas;
+			var offset = new me.Vector2d(obj.offsetLeft, obj.offsetTop);
+			while ( obj = obj.offsetParent ) {
+				offset.x += obj.offsetLeft;
+				offset.y += obj.offsetTop;
+			} 
+			return offset;
 		};
 
 		/**
@@ -9076,7 +8955,7 @@ window.me = window.me || {};
 				return;
 			}
 			// make sure we have the correct relative canvas position cached
-			me.input.offset = me.video.getPos();
+			me.input.mouse.offset = me.video.getPos();
 		};
 		
 		/**
@@ -9095,7 +8974,7 @@ window.me = window.me || {};
 			canvas.height = game_height_zoom = backBufferCanvas.height * scaleY;
 			
 			// make sure we have the correct relative canvas position cached
-			me.input.offset = me.video.getPos();
+			me.input.mouse.offset = me.video.getPos();
 
 			// force a canvas repaint
 			api.blitSurface();
@@ -9283,7 +9162,7 @@ window.me = window.me || {};
  *
  */
 
-(function(window) {
+(function($) {
 
 	/**
 	 * There is no constructor function for me.input.
@@ -9311,24 +9190,16 @@ window.me = window.me || {};
 		var keyLock = {};
 		// actual lock status of each key
 		var keyLocked = {};
-		
-		// list of registered Event handlers
-		var evtHandlers = {};
 
 		// some usefull flags
 		var keyboardInitialized = false;
-		var pointerInitialized = false;
+		var mouseInitialized = false;
 		var accelInitialized = false;
-
-		// Track last event timestamp to prevent firing events out of order
-		var lastTimeStamp = 0;
-
-	    // list of supported mouse & touch events
-		var activeEventList = null;
-		var mouseEventList =   ['mousewheel', 'mousemove', 'mousedown', 'mouseup', 'click', 'dblclick'];
-		var touchEventList =   [undefined, 'touchmove', 'touchstart', 'touchend', 'tap', 'dbltap'];
-		// (a polyfill will probably be required at some stage, once this will be fully standardized0
-		var pointerEventList = [undefined, 'PointerMove', 'PointerDown', 'PointerUp', undefined, undefined ];
+		
+		// list of supported mouse & touch events
+		var mouseEventList = ['mousewheel', 'mousemove', 'mousedown',  'mouseup', 'click', 'dblclick'];
+		var touchEventList = [ undefined,   'touchmove', 'touchstart', 'touchend', 'tap' , 'dbltap'];
+		
 		
 		/**
 		 * enable keyboard event
@@ -9337,81 +9208,38 @@ window.me = window.me || {};
 
 		function enableKeyboardEvent() {
 			if (!keyboardInitialized) {
-				window.addEventListener('keydown', keydown, false);
-				window.addEventListener('keyup', keyup, false);
+				$.addEventListener('keydown', keydown, false);
+				$.addEventListener('keyup', keyup, false);
 				keyboardInitialized = true;
 			}
 		}
 		
-		/** 
-		 * addEventListerner for the specified event list and callback
-		 * @private
-		 */
-		function registerEventListener(eventList, callback) {
-			for (var x = 2; x < eventList.length; ++x) {
-				if (eventList[x] !== undefined) {
-					me.video.getScreenCanvas().addEventListener(eventList[x], callback, false);
-				}
-			}
-		}
-		
-		
 		/**
-		 * enable pointer event (MSPointer/Mouse/Touch)
+		 * enable mouse event
 		 * @ignore
 		 */
-		function enablePointerEvent() {
-			if (!pointerInitialized) {
+		function enableMouseEvent() {
+			if (!mouseInitialized) {
 				// initialize mouse pos (0,0)
-				obj.changedTouches.push({ x: 0, y: 0 });
+				obj.touches.push({ x: 0, y: 0 });
 				obj.mouse.pos = new me.Vector2d(0,0);
 				// get relative canvas position in the page
-				obj.offset = me.video.getPos();
-				// Automatically update relative canvas position on scroll
-				window.addEventListener("scroll", throttle(100, false,
-					function (e) {
-						obj.offset = me.video.getPos();
-						me.event.publish(me.event.WINDOW_ONSCROLL, [ e ]);
-					}
-				), false);
+				obj.mouse.offset = me.video.getPos();
 				
-			    // MSPointer can hold Mouse & Touch events
-				if (window.navigator.pointerEnabled) {
-					activeEventList = pointerEventList;
-					// check for backward compatibility with the 'MS' prefix
-					var useMSPrefix = window.navigator.msPointerEnabled;
-					for(var x = 0; x < activeEventList.length; ++x) {
-						if (activeEventList[x] && !activeEventList[x].contains('MS')) {
-							activeEventList[x] = useMSPrefix ? 'MS' + activeEventList[x] : activeEventList[x].toLowerCase();
-						}
+				// add event listener for mouse & touch event
+				if (me.sys.touch) {
+					me.video.getScreenCanvas().addEventListener('touchmove', onMouseMove, false );
+					for (var x = 2; x < touchEventList.length;++x) {
+						me.video.getScreenCanvas().addEventListener(touchEventList[x], onTouchEvent, false );
 					}
-					// register PointerEvents
-					registerEventListener(activeEventList, onPointerEvent);
 				} else {
-                    // Regular `touch****` events for iOS/Android devices
-				    if (me.sys.touch) {
-						activeEventList = touchEventList;
-						registerEventListener(activeEventList, onPointerEvent);
-				    } else {
-						// Regular Mouse events
-				        activeEventList = mouseEventList;
-						window.addEventListener('mousewheel', onMouseWheel, false);
-						registerEventListener(activeEventList, onPointerEvent);
-				    }
+					me.video.getScreenCanvas().addEventListener('mousemove', onMouseMove, false);
+					$.addEventListener('mousewheel', onMouseWheel, false );
+					for (var x = 2; x < mouseEventList.length;++x) {
+						me.video.getScreenCanvas().addEventListener(mouseEventList[x], onMouseEvent, false );
+					}
 				}
-				// set the PointerMove/touchMove/MouseMove event
-				if (obj.throttlingInterval === undefined) {
-					// set the default value
-					obj.throttlingInterval = Math.floor(1000/me.sys.fps);
-				}
-				// if time interval <= 16, disable the feature
-				if (obj.throttlingInterval < 17) {
-					me.video.getScreenCanvas().addEventListener(activeEventList[1], onMoveEvent, false);
-				}
-				else {
-					me.video.getScreenCanvas().addEventListener(activeEventList[1], throttle(obj.throttlingInterval, false, function(e){onMoveEvent(e)}), false);
-				}
-				pointerInitialized = true;
+				mouseInitialized = true;
 			}
 		}
 
@@ -9488,45 +9316,28 @@ window.me = window.me || {};
 		}
 		
 		/**
-		 * propagate events to registered objects 
+		 * propagate mouse event to registed object 
 		 * @ignore
 		 */
-		function dispatchEvent(e) {
+		function dispatchMouseEvent(e) {
 			var handled = false;
-			var handlers = evtHandlers[e.type];
+			var handlers = obj.mouse.handlers[e.type];
 			if (handlers) {
-				// get the current screen to world offset 
-				var offset = me.game.viewport.screenToWorld(0,0);
-				for(var t=0, l=obj.changedTouches.length; t<l; t++) {
-					// Do not fire older events
-					if (typeof(e.timeStamp) !== "undefined") {
-						if (e.timeStamp < lastTimeStamp) continue;
-						lastTimeStamp = e.timeStamp;
-					}
-
-					// if PointerEvent is not supported 
-					if (!navigator.pointerEnabled) {	
-						// -> define pointerId to simulate the PointerEvent standard
-						e.pointerId = obj.changedTouches[t].id;
-					}
-
-					/* Initialize the two coordinate space properties. */
-					e.gameScreenX = obj.changedTouches[t].x;
-					e.gameScreenY = obj.changedTouches[t].y;
-					e.gameWorldX = e.gameScreenX + offset.x;
-					e.gameWorldY = e.gameScreenY + offset.y;
-					// parse all handlers
+				var vpos = me.game.viewport.pos;
+				var map_pos = me.game.currentLevel.pos;
+				for(var t=0, l=obj.touches.length; t<l; t++) {
+					// cache the x/y coordinates
+					var x = obj.touches[t].x;
+					var y = obj.touches[t].y;
 					for (var i = handlers.length, handler; i--, handler = handlers[i];) {
-						/* Set gameX and gameY depending on floating. */
-						if (handler.floating === true) {
-							e.gameX = e.gameScreenX;
-							e.gameY = e.gameScreenY;
+						// adjust to world coordinates if not a floating object
+						if (handler.floating===false) {
+							var v = {x: x + vpos.x - map_pos.x, y: y + vpos.y - map_pos.y };
 						} else {
-							e.gameX = e.gameWorldX;
-							e.gameY = e.gameWorldY;
+							var v = {x: x, y: y};
 						}
 						// call the defined handler
-						if ((handler.rect === null) || handler.rect.containsPoint(e.gameX, e.gameY)) {
+						if ((handler.rect === null) || handler.rect.containsPoint(v)) {
 							// trigger the corresponding callback
 							if (handler.cb(e) === false) {
 								// stop propagating the event if return false 
@@ -9537,38 +9348,47 @@ window.me = window.me || {};
 					}
 				} 
 			}
+
 			return handled;
 		}
+
 		
 		/**
-		 * translate event coordinates
+		 * translate Mouse Coordinates
 		 * @ignore
 		 */
 		function updateCoordFromEvent(e) {
+
 			// reset the touch array cache
-			obj.changedTouches.length=0;
-			
-			// PointerEvent or standard Mouse event
+			obj.touches.length=0;
+			// non touch event (mouse)
 			if (!e.touches) {
-				var local = obj.globalToLocal(e.clientX, e.clientY);
-				local.id =  e.pointerId || 1;
-				obj.changedTouches.push(local);
+				var offset = obj.mouse.offset;
+				var x = e.pageX - offset.x;
+				var y = e.pageY - offset.y;
+				var scale = me.sys.scale;
+				if (scale.x != 1.0 || scale.y != 1.0) {
+					x/=scale.x;
+					y/=scale.y;
+				}
+				obj.touches.push({ x: x, y: y, id: 0});
 			}
-			// iOS/Android like touch event
+			// touch event
 			else {
+				var offset = obj.mouse.offset;
 				for(var i=0, l=e.changedTouches.length; i<l; i++) {
 					var t = e.changedTouches[i];
-					var local = obj.globalToLocal(t.clientX, t.clientY);
-					local.id = t.identifier;
-					obj.changedTouches.push(local);
+					var x = t.clientX - offset.x;
+					var y = t.clientY - offset.y;
+					var scale = me.sys.scale;
+					if (scale.x != 1.0 || scale.y != 1.0) {
+						x/=scale.x; 
+						y/=scale.y;
+					}
+					obj.touches.push({ x: x, y: y, id: t.identifier });
 				}
 			}
-			// if event.isPrimary is defined and false, return
-			if (e.isPrimary === false) {
-				return;
-			}
-			// Else use the first entry to simulate mouse event
-			obj.mouse.pos.set(obj.changedTouches[0].x,obj.changedTouches[0].y);
+			obj.mouse.pos.set(obj.touches[0].x,obj.touches[0].y);
 		}
 
 	
@@ -9579,40 +9399,39 @@ window.me = window.me || {};
 		function onMouseWheel(e) {
 			if (e.target == me.video.getScreenCanvas()) {
 				// dispatch mouse event to registered object
-				if (dispatchEvent(e)) {
+				if (dispatchMouseEvent(e)) {
 					// prevent default action
 					return preventDefault(e);
 				}
 			}
+
 			return true;
 		}
 
 		
 		/**
-		 * mouse/touch/pointer event management (move)
+		 * mouse event management (mousemove)
 		 * @ignore
 		 */
-		function onMoveEvent(e) {
+		function onMouseMove(e) {
 			// update position
 			updateCoordFromEvent(e);
 			// dispatch mouse event to registered object
-			if (dispatchEvent(e)) {
+			if (dispatchMouseEvent(e)) {
 				// prevent default action
 				return preventDefault(e);
 			}
+
 			return true;
 		}
 		
 		/**
-		 * mouse/touch/pointer event management (start/down, end/up)
+		 * mouse event management (mousedown, mouseup)
 		 * @ignore
 		 */
-		function onPointerEvent(e) {
-			// update the pointer position
-			updateCoordFromEvent(e);
-		
+		function onMouseEvent(e) {
 			// dispatch event to registered objects
-			if (dispatchEvent(e)) {
+			if (dispatchMouseEvent(e)) {
 				// prevent default action
 				return preventDefault(e);
 			}
@@ -9622,13 +9441,24 @@ window.me = window.me || {};
 
 			// check if mapped to a key
 			if (keycode) {
-				if (e.type === activeEventList[3])
+				if (e.type === 'mousedown' || e.type === 'touchstart')
 					return keydown(e, keycode);
 				else // 'mouseup' or 'touchend'
 					return keyup(e, keycode);
 			}
 
 			return true;
+		}
+		
+		/**
+		 * mouse event management (touchstart, touchend)
+		 * @ignore
+		 */
+		function onTouchEvent(e) {
+			// update the new touch position
+			updateCoordFromEvent(e);
+			// reuse the mouse event function
+			return onMouseEvent(e);
 		}
 
 		/**
@@ -9677,33 +9507,19 @@ window.me = window.me || {};
 		 obj.mouse = {
 			// mouse position
 			pos : null,
+			// canvas offset
+			offset : null,
 			// button constants (W3C)
 			LEFT:	0,
 			MIDDLE: 1,
 			RIGHT:	2,
 			// bind list for mouse buttons
-			bind: [ 0, 0, 0 ]
+			bind: [ 0, 0, 0 ],
+			handlers:{} 
 		};
-
-		/**
-		 * cache value for the offset of the canvas position within the page
-		 * @private
-		 */
-		obj.offset = null;
 		
 		/**
-		 * time interval for event throttling in milliseconds<br>
-		 * default value : "1000/me.sys.fps" ms<br>
-		 * set to 0 ms to disable the feature
-		 * @public
-		 * @type Number
-		 * @name throttlingInterval
-		 * @memberOf me.input
-		 */
-		obj.throttlingInterval = undefined;
-			
-		/**
-		 * Array of object containing changed touch information (iOS event model)<br>
+		 * Array of object containing touch information<br>
 		 * properties : <br>
 		 * x : x position of the touch event in the canvas (screen coordinates)<br>
 		 * y : y position of the touch event in the canvas (screen coordinates)<br>
@@ -9713,7 +9529,7 @@ window.me = window.me || {};
 		 * @name touches
 		 * @memberOf me.input
 		 */		
-		obj.changedTouches = [];
+		obj.touches = [];
 		
 		/**
 		 * list of mappable keys :
@@ -9903,35 +9719,6 @@ window.me = window.me || {};
 			// remove the key binding
 			KeyBinding[keycode] = null;
 		};
-		
-		/** 
-		 * Translate the specified x and y values from the global (absolute) 
-		 * coordinate to local (viewport) relative coordinate.
-		 * @name globalToLocal
-		 * @memberOf me.input
-		 * @public
-		 * @function
-		 * @param {Number} x the global x coordinate to be translated.
-		 * @param {Number} y the global y coordinate to be translated.
-		 * @return {me.Vector2d} A vector object with the corresponding translated coordinates.
-		 * @example
-		 * onMouseEvent : function(e) {
-		 *    // convert the given into local (viewport) relative coordinates
-		 *    var pos = me.input.globalToLocal(e.clientX, e,clientY);
-		 *    // do something with pos !
-		 * };
-		 */
-		obj.globalToLocal = function (x, y) {
-			var offset = obj.offset;
-			x -= offset.left;
-			y -= offset.top;
-			var scale = me.sys.scale;
-			if (scale.x != 1.0 || scale.y != 1.0) {
-				x/=scale.x;
-				y/=scale.y;
-			}
-			return new me.Vector2d(x, y);
-		};
 
 		/**
 		 * Associate a mouse (button) action to a keycode
@@ -9953,7 +9740,7 @@ window.me = window.me || {};
 		obj.bindMouse = function (button, keyCode)
 		{
 			// make sure the mouse is initialized
-			enablePointerEvent();
+			enableMouseEvent();
 			
 			// throw an exception if no action is defined for the specified keycode
 			if (!KeyBinding[keyCode])
@@ -10013,88 +9800,86 @@ window.me = window.me || {};
 
 			
 		/**
-		 * allows registration of event listeners on the object target. <br>
-		 * (on a touch enabled device mouse event will automatically be converted to touch event)<br>
-		 * <br>
-		 * melonJS also define an additional `gameX/gameY` property in the Event object <br>
-		 * (accessible as parameter from the callback function) <br>
-		 * that allows to get the object coordinates whithin the canvas itself<br>
-		 * <img src="images/event_coord.png"/>
-		 * @name registerPointerEvent
+		 * register on a mouse event for a given region
+		 * note : on a touch enabled device mouse event will automatically be converted to touch event
+		 * @name registerMouseEvent
 		 * @memberOf me.input
 		 * @public
 		 * @function
-		 * @param {String} eventType  The event type for which the object is registering ('mousemove','mousedown','mouseup','mousewheel','touchstart','touchmove','touchend')
-		 * @param {me.Rect} rect object target (or corresponding region defined through me.Rect)
-		 * @param {Function} callback methods to be called when the event occurs.
+		 * @param {String} eventType ('mousemove','mousedown','mouseup','mousewheel','touchstart','touchmove','touchend')
+		 * @param {me.Rect} rect (object must inherits from me.Rect)
+		 * @param {Function} callback
 		 * @param {Boolean} [floating="floating property of the given object"] specify if the object is a floating object (if yes, screen coordinates are used, if not mouse/touch coordinates will be converted to world coordinates)
 		 * @example
 		 * // register on the 'mousemove' event
-		 * me.input.registerPointerEvent('mousemove', this.collisionBox, this.mouseMove.bind(this));
+		 * me.input.registerMouseEvent('mousemove', this.collisionBox, this.mouseMove.bind(this));
 		 */
-		obj.registerPointerEvent = function (eventType, rect, callback, floating) {
-		    // make sure the mouse/touch events are initialized
-		    enablePointerEvent();
-
-		    // convert mouse events to iOS/PointerEvent equivalent
-		    if ((mouseEventList.indexOf(eventType) !== -1) && (me.sys.touch || window.navigator.pointerEnabled)) {
-		        eventType = activeEventList[mouseEventList.indexOf(eventType)];
-		    }
-			// >>>TODO<<< change iOS touch event to their PointerEvent equivalent & vice-versa
+		obj.registerMouseEvent = function(eventType, rect, callback, floating) {
+			// make sure the mouse is initialized
+			enableMouseEvent();
 			
-		    // check if this is supported event
-		    if (eventType && (activeEventList.indexOf(eventType) !== -1)) {
-		        // register the event
-		        if (!evtHandlers[eventType]) {
-		            evtHandlers[eventType] = [];
-		        }
-		        // check if this is a floating object or not
-		        var _float = rect.floating === true ? true : false;
-		        // check if there is a given parameter
-		        if (floating) {
-		            // ovveride the previous value
-		            _float = floating === true ? true : false;
-		        }
-		        // initialize the handler
-		        evtHandlers[eventType].push({ rect: rect || null, cb: callback, floating: _float });
-		        return;
-		    }
-		    throw "melonJS : invalid event type : " + eventType;
+			// convert the mouse event into a touch event 
+			// if we are on a touch device
+			if ( me.sys.touch && (mouseEventList.indexOf(eventType) !== -1)) {
+				eventType = touchEventList[mouseEventList.indexOf(eventType)];
+			}
+			
+			// check if this is supported event
+			if (eventType && ((mouseEventList.indexOf(eventType) !== -1) || 
+				(touchEventList.indexOf(eventType) !== -1))) {
+				
+				// register the event
+				if (!obj.mouse.handlers[eventType]) {
+					obj.mouse.handlers[eventType] = [];
+ 				}
+				// check if this is a floating object or not
+				var _float = rect.floating===true?true:false;
+				// check if there is a given parameter
+				if (floating) {
+					// ovveride the previous value
+					_float = floating===true?true:false;
+				}
+				// initialize the handler
+				obj.mouse.handlers[eventType].push({rect:rect||null,cb:callback,floating:_float});
+				return;
+			}
+			throw "melonJS : invalid event type : " + eventType;
 		};
 		
 		/**
-		 * allows the removal of event listeners from the object target.
+		 * release the previously registered mouse event callback
 		 * note : on a touch enabled device mouse event will automatically be converted to touch event
-		 * @name releasePointerEvent
+		 * @name releaseMouseEvent
 		 * @memberOf me.input
 		 * @public
 		 * @function
-		 * @param {String} eventType  The event type for which the object is registering ('mousemove', 'mousedown', 'mouseup', 'mousewheel', 'click', 'dblclick', 'touchstart', 'touchmove', 'touchend', 'tap', 'dbltap')
-		 * @param {me.Rect} region object target (or corresponding region defined through me.Rect)
+		 * @param {String} eventType ('mousemove', 'mousedown', 'mouseup', 'mousewheel', 'click', 'dblclick', 'touchstart', 'touchmove', 'touchend', 'tap', 'dbltap')
+		 * @param {me.Rect} region
 		 * @example
-		 * // release the registered object/region on the 'mousemove' event
-		 * me.input.releasePointerEvent('mousemove', this.collisionBox);
+		 * // release the registered callback on the 'mousemove' event
+		 * me.input.releaseMouseEvent('mousemove', this.collisionBox);
 		 */
-		obj.releasePointerEvent = function(eventType, rect) {
-			// convert mouse events to iOS/MSPointer equivalent
-		    if ((mouseEventList.indexOf(eventType) !== -1) && (me.sys.touch || window.navigator.pointerEnabled)) {
-		        eventType = activeEventList[mouseEventList.indexOf(eventType)];
-		    }
-			// >>>TODO<<< change iOS touch event to their PointerEvent equivalent & vice-versa
-			
-		    // check if this is supported event
-		    if (eventType && (activeEventList.indexOf(eventType) !== -1)) {
+		obj.releaseMouseEvent = function(eventType, rect) {
+			// convert the mouse event into a touch event 
+			// if we are on a touch device
+			if ( me.sys.touch && (mouseEventList.indexOf(eventType) !== -1)) {
+				eventType = touchEventList[mouseEventList.indexOf(eventType)];
+			}			
+			// check if this is supported event
+			if (eventType && ((mouseEventList.indexOf(eventType) !== -1) || 
+				(touchEventList.indexOf(eventType) !== -1))) {
+				
 				// unregister the event
-				if (!evtHandlers[eventType]) {
-					evtHandlers[eventType] = [];
+				if (!obj.mouse.handlers[eventType]) {
+					obj.mouse.handlers[eventType] = [];
  				}
-				var handlers = evtHandlers[eventType];
+				var handlers = obj.mouse.handlers[eventType];
 				if (handlers) {
 					for (var i = handlers.length, handler; i--, handler = handlers[i];) {
 						if (handler.rect === rect) {
 							// make sure all references are null
 							handler.rect = handler.cb = handler.floating = null;
-							evtHandlers[eventType].splice(i, 1);
+							obj.mouse.handlers[eventType].splice(i, 1);
 						}
 					}
 				}
@@ -10112,10 +9897,10 @@ window.me = window.me || {};
 		 * @return {boolean} false if not supported by the device
 		 */
 		obj.watchAccelerometer = function() {
-			if (window.sys.gyro) {
+			if ($.sys.gyro) {
 				if (!accelInitialized) {
 					// add a listener for the mouse
-					window.addEventListener('devicemotion', onDeviceMotion, false);
+					$.addEventListener('devicemotion', onDeviceMotion, false);
 					accelInitialized = true;
 				}
 				return true;
@@ -10133,7 +9918,7 @@ window.me = window.me || {};
 		obj.unwatchAccelerometer = function() {
 			if (accelInitialized) {
 				// add a listener for the mouse
-				window.removeEventListener('devicemotion', onDeviceMotion, false);
+				$.removeEventListener('devicemotion', onDeviceMotion, false);
 				accelInitialized = false;
 			}
 		};
@@ -13525,9 +13310,9 @@ window.me = window.me || {};
 			if (levels[levelId] instanceof me.TMXTileMap) {
 
 				// check the status of the state mngr
-				var wasRunning = me.state.isRunning();
+				var isRunning = me.state.isRunning();
 
-				if (wasRunning) {
+				if (isRunning) {
 					// pause the game loop to avoid 
 					// some silly side effects
 					me.state.pause();
@@ -13554,10 +13339,10 @@ window.me = window.me || {};
 				// add the specified level to the game manager
 				me.game.loadTMXLevel(levels[levelId]);
 				
-				if (wasRunning) {
+				if (isRunning) {
 					// resume the game loop if it was
 					// previously running
-					me.state.resume.defer();
+					me.state.resume();
 				}
 			} else
 				throw "melonJS: no level loader defined";
@@ -14351,17 +14136,7 @@ window.me = window.me || {};
 		 * @name me.event#WINDOW_ONRESIZE
 		 */
 		obj.WINDOW_ONRESIZE = "window.onresize";
-
-		/**
-		 * Channel Constant for when the (browser) window is scrolled <br>
-		 * Data passed : {Event} Event object <br>
-		 * @public
-		 * @constant
-		 * @type String
-		 * @name me.event#WINDOW_ONSCROLL
-		 */
-		obj.WINDOW_ONSCROLL = "window.onscroll";
-
+		
 		/**
 		 * Publish some data on a channel
 		 * @name me.event#publish

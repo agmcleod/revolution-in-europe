@@ -7,7 +7,7 @@ Game.PlayScreen = me.ScreenObject.extend({
   },
   init: function() {
     this.parent(true, true);
-    this.atlas = new me.TextureAtlas(me.loader.getJSON("ch1"), me.loader.getImage("ch1"));
+    this.atlas = new me.TextureAtlas(me.loader.getAtlas("ch1"), me.loader.getImage("ch1"));
   },
   onDestroyEvent: function() {
 
