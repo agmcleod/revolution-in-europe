@@ -20,7 +20,7 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.background._sourceAngle = region.angle;
     this.setupColumns();
     
-    this.train = new me.SpriteObject(-200, 72, this.atlas.texture, 480, 192);
+    this.train = new me.SpriteObject(-500, 72, this.atlas.texture, 480, 192);
     region = this.atlas.getRegion('subway.png');
     this.train.offset.setV(region.offset)
     this.train._sourceAngle = region.angle;
@@ -29,7 +29,6 @@ Game.PlayScreen = me.ScreenObject.extend({
   setupColumns: function() {
     this.columns = [];
     this.columns.push(new me.SpriteObject(90, 64, this.atlas.texture, 32, 215));
-    this.columns.push(new me.SpriteObject(230, 64, this.atlas.texture, 32, 215));
     this.columns.push(new me.SpriteObject(370, 64, this.atlas.texture, 32, 215));
     var region = this.atlas.getRegion('column.png');
     for(var i = 0; i < this.columns.length; i++) {
