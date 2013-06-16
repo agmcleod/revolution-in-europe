@@ -24,6 +24,8 @@ Game.PlayScreen = me.ScreenObject.extend({
     region = this.atlas.getRegion('subway.png');
     this.train.offset.setV(region.offset)
     this.train._sourceAngle = region.angle;
+    me.game.add(new Game.Character(100, 100, 0, this.atlas), 100);
+    me.game.sort();
   },
 
   setupColumns: function() {

@@ -1,9 +1,17 @@
 {"frames": [
 
 {
-	"filename": "column.png",
-	"frame": {"x":2,"y":518,"w":32,"h":215},
+	"filename": "characters.png",
+	"frame": {"x":2,"y":518,"w":218,"h":128},
 	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":19,"y":0,"w":218,"h":128},
+	"sourceSize": {"w":256,"h":128}
+},
+{
+	"filename": "column.png",
+	"frame": {"x":222,"y":518,"w":32,"h":215},
+	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":215},
 	"sourceSize": {"w":32,"h":215}
@@ -29,8 +37,8 @@
 	"version": "1.0",
 	"image": "ch1.png",
 	"format": "RGBA8888",
-	"size": {"w":512,"h":1024},
+	"size": {"w":484,"h":648},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:799866ccfac04564b7683a9b46012cb4$"
+	"smartupdate": "$TexturePacker:SmartUpdate:7301c0aa533ef544fe990208e14e9de3$"
 }
 }
