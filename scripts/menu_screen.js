@@ -34,6 +34,8 @@ Game.MenuScreen = me.ScreenObject.extend({
   },
 
   onDestroyEvent: function() {
+    me.input.unbindTouch();
+    me.input.unbindKey(me.input.KEY.ENTER);
     for(var i = 0; i < this.chapters.length; i++) {
       var btn = this.chapters[i];
       me.game.remove(btn);
@@ -45,20 +47,16 @@ Game.MenuScreen = me.ScreenObject.extend({
     this.showChapters = false;
 
     me.input.bindKey(me.input.KEY.ENTER, 'next');
-    me.input.bindMouse(0, me.input.KEY.ENTER);
     me.input.bindTouch(me.input.KEY.ENTER);
 
     this.showChapters = false;
     this.chapters = [
-      new Game.ChapterButton(50, 70, 200, 25, 'Chapter 1', 'Xolonium', '13px', 'white', this, 0)
+      new Game.ChapterButton(50, 70, 200, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 0)
     ];
   },
 
   update: function() {
-    if(me.input.isKeyPressed('next')) {
-      me.input.unbindMouse(0);
-      me.input.unbindTouch();
-      me.input.unbindKey(me.input.KEY.ENTER);
+    if(me.input.isKeyPressed('next') && !this.showChapters) {
       var _this = this;
       this.showChapters = true;
       me.game.add(this.chapters[0]);
