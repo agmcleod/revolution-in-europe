@@ -80,8 +80,7 @@ Game.ChapterButton = me.GUI_Object.extend({
 
     this.ctx = me.video.createCanvasSurface(w, h);
     this.ctx.fillStyle = 'white';
-    font.textBaseline = 'middle';
-    font.draw(this.ctx, text, 0.0, h * 0.75);
+    font.draw(this.ctx, text, 0, 0);
 
     this.parent(x, y, {
       image: this.ctx.canvas,
