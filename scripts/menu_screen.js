@@ -11,6 +11,7 @@ Game.MenuScreen = me.ScreenObject.extend({
 
   drawChapterSelection: function(ctx) {
     this.font.draw(ctx, 'Click on a chapter', me.video.getSystemCanvas().width / 2, 30);
+    this.smallerFont.draw(ctx, 'Chapter 1', 20, 80);
   },
 
   drawIntro: function(ctx) {
@@ -27,28 +28,49 @@ Game.MenuScreen = me.ScreenObject.extend({
     this.parent(true);
   },
 
-  loadPlayScreen: function() {
+  loadPlayScreen: function(chapterNumber) {
     me.state.set(me.state.PLAY, new Game.PlayScreen(chapterNumber));
     me.state.change(me.state.PLAY);
   },
 
   onDestroyEvent: function() {
-    me.input.unbindMouse(0);
-    me.input.unbindTouch();
-    me.input.unbindKey(me.input.KEY.ENTER);
+    for(var i = 0; i < this.eventRegions.length; i++) {
+      var region = this.eventRegions[i];
+      me.input.releaseMouseEvent('mousedown', region);
+      me.input.releaseMouseEvent('touchend', region);
+    }
   },
 
   onResetEvent: function() {
     this.font = new me.Font('Xolonium', '15px', '#fff', 'center');
+    this.smallerFont = new me.Font('Xolonium', '13px', '#fff');
     this.showChapters = false;
 
     me.input.bindKey(me.input.KEY.ENTER, 'next');
     me.input.bindMouse(0, me.input.KEY.ENTER);
     me.input.bindTouch(me.input.KEY.ENTER);
+
+    this.eventRegions = [
+      new me.Rect(new me.Vector2d(20, 80), 100, 15)
+    ];
   },
 
   update: function() {
     if(me.input.isKeyPressed('next')) {
+      if(!this.showChapters) {
+        me.input.unbindMouse(0);
+        me.input.unbindTouch();
+        me.input.unbindKey(me.input.KEY.ENTER);
+        var _this = this;
+        me.input.registerMouseEvent('mousedown', this.eventRegions[0], function() {
+          _this.loadPlayScreen(0);
+        });
+
+        me.input.registerMouseEvent('touchend', this.eventRegions[0], function() {
+          _this.loadPlayScreen(0);
+        });  
+      }
+      
       this.showChapters = true;
     }
     return true;
