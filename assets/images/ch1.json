@@ -1,20 +1,44 @@
 {"frames": [
 
 {
-	"filename": "characters.png",
-	"frame": {"x":2,"y":518,"w":218,"h":128},
-	"rotated": false,
+	"filename": "aaron.png",
+	"frame": {"x":349,"y":518,"w":28,"h":122},
+	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":19,"y":0,"w":218,"h":128},
-	"sourceSize": {"w":256,"h":128}
+	"spriteSourceSize": {"x":18,"y":6,"w":28,"h":122},
+	"sourceSize": {"w":64,"h":128}
 },
 {
 	"filename": "column.png",
-	"frame": {"x":222,"y":518,"w":32,"h":215},
+	"frame": {"x":2,"y":518,"w":32,"h":215},
 	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":215},
 	"sourceSize": {"w":32,"h":215}
+},
+{
+	"filename": "kevin.png",
+	"frame": {"x":343,"y":548,"w":28,"h":122},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "lei.png",
+	"frame": {"x":219,"y":518,"w":28,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":0,"w":28,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "shannon.png",
+	"frame": {"x":219,"y":548,"w":28,"h":122},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
+	"sourceSize": {"w":64,"h":128}
 },
 {
 	"filename": "subway.png",
@@ -37,8 +61,8 @@
 	"version": "1.0",
 	"image": "ch1.png",
 	"format": "RGBA8888",
-	"size": {"w":484,"h":648},
+	"size": {"w":484,"h":578},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:7301c0aa533ef544fe990208e14e9de3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:ee9a4e63882060a35ba6a3d1d809f447$"
 }
 }
