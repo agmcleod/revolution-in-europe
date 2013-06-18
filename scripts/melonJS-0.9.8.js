@@ -9647,7 +9647,7 @@ window.me = window.me || {};
 
 			// check if mapped to a key
 			if (keycode) {
-				if (e.type === activeEventList[3])
+				if (e.type === activeEventList[2])
 					return keydown(e, keycode);
 				else // 'mouseup' or 'touchend'
 					return keyup(e, keycode);
