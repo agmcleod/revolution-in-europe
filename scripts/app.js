@@ -10,6 +10,10 @@ Game.Loader = (function() {
       name: 'ch1',
       type: 'image',
       src: 'assets/images/ch1.png'
+    }, {
+      name: 'dialog',
+      type: 'image',
+      src: 'assets/images/dialog.png'
     }];
   }
 

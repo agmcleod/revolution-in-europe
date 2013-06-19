@@ -1,4 +1,8 @@
 Game.MenuScreen = me.ScreenObject.extend({
+  init: function() {
+    this.parent(true);
+  },
+
   draw: function(ctx) {
     this.parent(ctx);
     me.video.clearSurface(ctx, '#000');
@@ -22,10 +26,6 @@ Game.MenuScreen = me.ScreenObject.extend({
     this.font.draw(ctx, "Now I want to share how my experiences", x, 130);
     this.font.draw(ctx, "had a positive effect on my life.", x, 155);
     this.font.draw(ctx, "Click to continue", x, 200);
-  },
-
-  init: function() {
-    this.parent(true);
   },
 
   loadPlayScreen: function(chapterNumber) {
@@ -90,7 +90,6 @@ Game.ChapterButton = me.GUI_Object.extend({
   },
   onClick: function() {
     this.screen.loadPlayScreen(this.index);
-    console.log('clicked');
     return true;
   },
   update: function() {
