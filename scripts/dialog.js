@@ -122,18 +122,18 @@ Game.DialogObject = me.SpriteObject.extend({
     while (typeof(words[counter]) !== 'undefined') {
       wordSize = this.font.measureText(me.video.getSystemContext(), words[counter] + " ").width;
       if (counter != 0 && wordSize + totalSize > this.widthText) {
-      totalSize = wordSize;
-      substringsCounter++;
-      substrings[substringsCounter] = words[counter];
-      }
-      else {
-      totalSize += wordSize;
-      if (typeof(substrings[substringsCounter]) === 'undefined') {
+        totalSize = wordSize;
+        substringsCounter++;
         substrings[substringsCounter] = words[counter];
       }
       else {
-        substrings[substringsCounter] += " " + words[counter];
-      }
+        totalSize += wordSize;
+        if (typeof(substrings[substringsCounter]) === 'undefined') {
+          substrings[substringsCounter] = words[counter];
+        }
+        else {
+          substrings[substringsCounter] += " " + words[counter];
+        }
       }
       counter++;
     }
