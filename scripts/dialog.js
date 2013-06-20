@@ -56,10 +56,12 @@ Game.dialog = function dialog(script, callback, atlas) {
 Game.DialogObject = me.SpriteObject.extend({
   init: function (x, y, background, dialog, widthText, heightText, offsetTextX, offsetTextY, font, tagKey, callback) {
     this.pos = new me.Vector2d(x, y);
+    this.nameOffset = 80;
     this.background = background;
     this.font = font;
     this.tagKey = tagKey;
-    this.widthText = widthText;
+    // offset multiplied by 3 for buffer
+    this.widthText = widthText - this.nameOffset - (offsetTextX * 3);
     this.heightText = heightText;
     this.rowCount = Math.floor(this.heightText / (this.font.height * 1.1));
     this.offsetTextX = offsetTextX;
@@ -83,11 +85,15 @@ Game.DialogObject = me.SpriteObject.extend({
       var offset = 0;
       for (var i = 0; i < this.rowCount; i++) {
         if (typeof(this.rows[this.counter][this.currentRow + i]) !== 'undefined') {
-          dialog.font.draw(context, dialog.name, this.pos.x + this.offsetTextX - map_pos.x, this.pos.y + this.offsetTextY - map_pos.y + offset);
+          var offsetText = 0;
+          if(i == 0) {
+            offsetText = this.nameOffset;
+            dialog.font.draw(context, dialog.name, this.pos.x + this.offsetTextX - map_pos.x, this.pos.y + this.offsetTextY - map_pos.y + offset);  
+          }
           this.font.draw(
             context,
             this.rows[this.counter][this.currentRow + i],
-            this.pos.x + this.offsetTextX - map_pos.x + 50,
+            this.pos.x + this.offsetTextX - map_pos.x + offsetText,
             this.pos.y + this.offsetTextY - map_pos.y + offset
           );
           offset += (this.font.height * 1.1);

@@ -3,10 +3,10 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.parent(true);
     this.atlas = new me.TextureAtlas(me.loader.getJSON("ch1"), me.loader.getImage("ch1"));
     this.addedPlayers = false;
-    this.kevinColour = new me.Font("Verdana", 14, '#1d8a00');
-    this.aaronColour = new me.Font("Verdana", 14, '#00b3e0');
-    this.leiColour = new me.Font("Verdana", 14, '#ffd08a');
-    this.shannonColour = new me.Font("Verdana", 14, '#fff67e');
+    this.kevinFont = new me.Font("Verdana", 14, '#1d8a00');
+    this.aaronFont = new me.Font("Verdana", 14, '#00b3e0');
+    this.leiFont = new me.Font("Verdana", 14, '#ffd08a');
+    this.shannonFont = new me.Font("Verdana", 14, '#fff67e');
   },
   addTrain: function() {
     this.train = new me.SpriteObject(-500, 72, this.atlas.texture, 480, 192);
@@ -15,6 +15,7 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.train._sourceAngle = region.angle;
   },
   onDestroyEvent: function() {
+    me.input.unbindTouch();
     me.input.unbindKey(me.input.KEY.ENTER);
     me.input.unbindKey(me.input.KEY.E);
   },
@@ -36,7 +37,23 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.startDialog = [{
       name: "Kevin:",
       text: "I can't believe we're in London!",
-      font: this.kevinColour
+      font: this.kevinFont
+    }, {
+      name: "Aaron:",
+      text: "So much nicer than back home.",
+      font: this.aaronFont,
+    }, {
+      name: "Shannon:",
+      text: "Well guys, shall we go?",
+      font: this.shannonFont
+    }, {
+      name: "Kevin:",
+      text: "Sounds good. Hey Aaron, bet you I can run up all those stairs.",
+      font: this.kevinFont
+    }, {
+      name: "Aaron",
+      text: "You always out ran me as a kid. Let's see if i can keep up, speedy!",
+      font: this.aaronFont
     }];
 
     me.game.add(this.train, 10);
@@ -65,8 +82,9 @@ Game.PlayScreen = me.ScreenObject.extend({
   },
 
   setupInput: function() {
-    me.input.bindKey(me.input.KEY.ENTER, 'action');
-    me.input.bindKey(me.input.KEY.E, 'action');
+    me.input.bindKey(me.input.KEY.ENTER, 'action', true);
+    me.input.bindKey(me.input.KEY.E, 'action', true);
+    me.input.bindTouch(me.input.KEY.E, true);
   },
 
   update: function() {
