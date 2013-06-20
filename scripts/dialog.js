@@ -21,11 +21,11 @@
 /* Dialog box */
 Game.dialog = function dialog(script, callback, atlas) {
   var background = me.loader.getImage('dialog');
-  var font = new me.Font("Verdana", 16, "#eee");
+  var font = new me.Font("Verdana", 14, "#eee");
 
   var dialogBox = new Game.DialogObject(
     // x, y
-    30, me.video.getHeight() - background.height - 15,
+    20, 30,
 
     // Background image.
     background,
@@ -34,7 +34,7 @@ Game.dialog = function dialog(script, callback, atlas) {
     script,
 
     // width, height.
-    350, 128,
+    440, 100,
 
     // Text offset x, y.
     12, 12,
@@ -53,25 +53,6 @@ Game.dialog = function dialog(script, callback, atlas) {
 };
 
 
-/**
- * A simple dialog manager.
- * @class
- * @extends Object
- * @constructor
- * @param {int} x the x coordinates of the dialog box
- * @param {int} y the y coordinates of the dialog box
- * @param {me.loader#getImage} background image
- * @param {array} an array of dialog phrases (strings)
- * @param {int} width of the textbox
- * @param {int} height of the textbox
- * @param {int} x offset of the textbox inside the background image
- * @param {int} y offset of the textbox inside the background image
- * @param {me#Font} the font used to write the dialog
- * @param {String} tag of the key used to pass the dialog pages
- * @param {function} an optional callback function to be called when the dialog is done
- * @example
- * dialog = new DialogObject(10, 10, background, dialog, background.width - OFFSET_SIZE_TEXT_X, background.width - OFFSET_SIZE_TEXT_Y, OFFSET_DIALOG_X, OFFSET_DIALOG_Y, new me.Font("acmesa",20,"#880D0D", "center"), "enter", activateControls);
- */
 Game.DialogObject = me.SpriteObject.extend({
   init: function (x, y, background, dialog, widthText, heightText, offsetTextX, offsetTextY, font, tagKey, callback) {
     this.pos = new me.Vector2d(x, y);
@@ -88,22 +69,25 @@ Game.DialogObject = me.SpriteObject.extend({
     this.rows = [ this.getWords(this.dialog[0]) ];
     this.currentRow = 0;
     this.callback = callback;
+
     this.parent(this.pos.x, this.pos.y, this.background, this.widthText, this.heightText);
   },
 
   draw: function (context, rect) {
     this.parent(context, rect);
-    if (typeof(this.dialog[this.counter]) !== 'undefined') {
+    var dialog = this.dialog[this.counter];
+    if (typeof(dialog) !== 'undefined') {
       // Convert screen coordinates to world coordinates.
       var map_pos = me.game.currentLevel.pos;
       context.drawImage(this.background, this.pos.x - map_pos.x, this.pos.y - map_pos.y);
       var offset = 0;
       for (var i = 0; i < this.rowCount; i++) {
         if (typeof(this.rows[this.counter][this.currentRow + i]) !== 'undefined') {
+          dialog.font.draw(context, dialog.name, this.pos.x + this.offsetTextX - map_pos.x, this.pos.y + this.offsetTextY - map_pos.y + offset);
           this.font.draw(
             context,
             this.rows[this.counter][this.currentRow + i],
-            this.pos.x + this.offsetTextX - map_pos.x,
+            this.pos.x + this.offsetTextX - map_pos.x + 50,
             this.pos.y + this.offsetTextY - map_pos.y + offset
           );
           offset += (this.font.height * 1.1);
@@ -112,13 +96,13 @@ Game.DialogObject = me.SpriteObject.extend({
     }
   },
 
-  getWords: function (text) {
+  getWords: function (obj) {
     var totalSize = 0;
     var wordSize = 0;
     var substrings = [];
     var substringsCounter = 0;
     var counter = 0;
-    var words = text.split(" ");
+    var words = obj.text.split(" ");
     while (typeof(words[counter]) !== 'undefined') {
       wordSize = this.font.measureText(me.video.getSystemContext(), words[counter] + " ").width;
       if (counter != 0 && wordSize + totalSize > this.widthText) {

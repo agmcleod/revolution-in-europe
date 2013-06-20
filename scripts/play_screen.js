@@ -3,6 +3,10 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.parent(true);
     this.atlas = new me.TextureAtlas(me.loader.getJSON("ch1"), me.loader.getImage("ch1"));
     this.addedPlayers = false;
+    this.kevinColour = new me.Font("Verdana", 14, '#1d8a00');
+    this.aaronColour = new me.Font("Verdana", 14, '#00b3e0');
+    this.leiColour = new me.Font("Verdana", 14, '#ffd08a');
+    this.shannonColour = new me.Font("Verdana", 14, '#fff67e');
   },
   addTrain: function() {
     this.train = new me.SpriteObject(-500, 72, this.atlas.texture, 480, 192);
@@ -28,6 +32,12 @@ Game.PlayScreen = me.ScreenObject.extend({
       new Game.Character(240, 235, 2, this.atlas),
       new Game.Character(310, 240, 3, this.atlas)
     ];
+
+    this.startDialog = [{
+      name: "Kevin:",
+      text: "I can't believe we're in London!",
+      font: this.kevinColour
+    }];
 
     me.game.add(this.train, 10);
     me.game.sort();
@@ -69,7 +79,7 @@ Game.PlayScreen = me.ScreenObject.extend({
         var player = this.players[i];
         me.game.add(player, 30);
       }
-      Game.dialog("Ah london, I cannot believe we're here!");
+      Game.dialog(this.startDialog);
       me.game.sort();
     }
 
