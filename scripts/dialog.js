@@ -61,7 +61,8 @@ Game.DialogObject = me.SpriteObject.extend({
     this.font = font;
     this.tagKey = tagKey;
     // offset multiplied by 3 for buffer
-    this.widthText = widthText - this.nameOffset - (offsetTextX * 3);
+    this.firstLineWidthText = 280;
+    this.widthText = widthText;
     this.heightText = heightText;
     this.rowCount = Math.floor(this.heightText / (this.font.height * 1.1));
     this.offsetTextX = offsetTextX;
@@ -109,12 +110,16 @@ Game.DialogObject = me.SpriteObject.extend({
     var substringsCounter = 0;
     var counter = 0;
     var words = obj.text.split(" ");
+    var lineWidth = this.firstLineWidthText;
     while (typeof(words[counter]) !== 'undefined') {
       wordSize = this.font.measureText(me.video.getSystemContext(), words[counter] + " ").width;
-      if (counter != 0 && wordSize + totalSize > this.widthText) {
+      if (counter != 0 && wordSize + totalSize > lineWidth) {
         totalSize = wordSize;
         substringsCounter++;
         substrings[substringsCounter] = words[counter];
+        if(lineWidth == this.firstLineWidthText) {
+          lineWidth = this.widthText;
+        }
       }
       else {
         totalSize += wordSize;

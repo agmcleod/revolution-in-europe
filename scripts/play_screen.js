@@ -54,7 +54,7 @@ Game.PlayScreen = me.ScreenObject.extend({
       font: this.kevinFont
     }, {
       name: "Aaron",
-      text: "You always out ran me as a kid. Let's see if i can keep up, speedy!",
+      text: "You always out ran me as a kid. Bring it!",
       font: this.aaronFont
     }];
 
