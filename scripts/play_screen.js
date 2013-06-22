@@ -33,6 +33,9 @@ Game.PlayScreen = me.ScreenObject.extend({
       new Game.Character(310, 240, 3)
     ];
 
+    this.players[2].flipX(true);
+    this.players[3].flipX(true);
+
     this.startDialog = [{
       name: "Kevin:",
       text: "I can't believe we're in London!",

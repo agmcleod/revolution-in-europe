@@ -18,10 +18,19 @@ Game.MenuScreen = me.ScreenObject.extend({
         this.font.draw(ctx, 'planning begun. Not the most athletic, but quick witted.', x, 80);
         break;
       case 2:
+        this.font.draw(ctx, 'Kevin came up with the trip idea.', x, 30);
+        this.font.draw(ctx, 'Always has a fun attitude, and lots of energy.', x, 55);
+        this.font.draw(ctx, 'Invited Lei & Shannon to come along.', x, 80);
         break;
       case 3:
+        this.font.draw(ctx, 'Lei is a bit quieter', x, 30);
+        this.font.draw(ctx, 'Not quite as energetic as Aaron or Kevin,', x, 55);
+        this.font.draw(ctx, 'but stands a bit taller, and gets along quite happily', x, 80);
         break;
       case 4:
+        this.font.draw(ctx, 'Shannon is the more sensible one.', x, 30);
+        this.font.draw(ctx, 'She is the only one that remembers some French', x, 55);
+        this.font.draw(ctx, 'since highschool.', x, 80);
         break;
       case 5:
         this.drawChapterSelection(ctx);
