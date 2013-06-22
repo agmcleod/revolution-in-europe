@@ -52,7 +52,9 @@ Game.MenuScreen = me.ScreenObject.extend({
   onDestroyEvent: function() {
     me.input.unbindTouch();
     me.input.unbindKey(me.input.KEY.ENTER);
-    me.game.removeAll();
+    for(var i = 0; i < this.chapters.length; i++) {
+      me.game.remove(this.chapters[i]);
+    }
   },
 
   onResetEvent: function() {

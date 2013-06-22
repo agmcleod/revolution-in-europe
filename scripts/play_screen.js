@@ -2,8 +2,8 @@ Game.PlayScreen = me.ScreenObject.extend({
   init: function() {
     this.parent(true);
     this.addedPlayers = false;
-    this.kevinFont = new me.Font("Verdana", 14, '#1d8a00');
-    this.aaronFont = new me.Font("Verdana", 14, '#00b3e0');
+    this.aaronFont = new me.Font("Verdana", 14, '#1d8a00');
+    this.kevinFont = new me.Font("Verdana", 14, '#00b3e0');
     this.leiFont = new me.Font("Verdana", 14, '#ffd08a');
     this.shannonFont = new me.Font("Verdana", 14, '#fff67e');
   },
