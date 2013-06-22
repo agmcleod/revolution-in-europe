@@ -1,7 +1,6 @@
 Game.PlayScreen = me.ScreenObject.extend({
   init: function() {
     this.parent(true);
-    this.atlas = new me.TextureAtlas(me.loader.getJSON("ch1"), me.loader.getImage("ch1"));
     this.addedPlayers = false;
     this.kevinFont = new me.Font("Verdana", 14, '#1d8a00');
     this.aaronFont = new me.Font("Verdana", 14, '#00b3e0');
@@ -9,8 +8,8 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.shannonFont = new me.Font("Verdana", 14, '#fff67e');
   },
   addTrain: function() {
-    this.train = new me.SpriteObject(-500, 72, this.atlas.texture, 480, 192);
-    region = this.atlas.getRegion('subway.png');
+    this.train = new me.SpriteObject(-500, 72, Game.atlas.texture, 480, 192);
+    region = Game.atlas.getRegion('subway.png');
     this.train.offset.setV(region.offset)
     this.train._sourceAngle = region.angle;
   },
@@ -28,10 +27,10 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.setupInput();
 
     this.players = [
-      new Game.Character(100, 240, 0, this.atlas),
-      new Game.Character(170, 240, 1, this.atlas),
-      new Game.Character(240, 235, 2, this.atlas),
-      new Game.Character(310, 240, 3, this.atlas)
+      new Game.Character(100, 240, 0),
+      new Game.Character(170, 240, 1),
+      new Game.Character(240, 235, 2),
+      new Game.Character(310, 240, 3)
     ];
 
     this.startDialog = [{
@@ -61,8 +60,8 @@ Game.PlayScreen = me.ScreenObject.extend({
   },
 
   setupBackground: function() {
-    this.background = new me.SpriteObject(0, 0, this.atlas.texture, 480, 320);
-    var region = this.atlas.getRegion('tube.png');
+    this.background = new me.SpriteObject(0, 0, Game.atlas.texture, 480, 320);
+    var region = Game.atlas.getRegion('tube.png');
     this.background.offset.setV(region.offset);
     this.background._sourceAngle = region.angle;
     me.game.add(this.background, 0);
@@ -70,9 +69,9 @@ Game.PlayScreen = me.ScreenObject.extend({
 
   setupColumns: function() {
     this.columns = [];
-    this.columns.push(new me.SpriteObject(90, 64, this.atlas.texture, 32, 215));
-    this.columns.push(new me.SpriteObject(370, 64, this.atlas.texture, 32, 215));
-    var region = this.atlas.getRegion('column.png');
+    this.columns.push(new me.SpriteObject(90, 64, Game.atlas.texture, 32, 215));
+    this.columns.push(new me.SpriteObject(370, 64, Game.atlas.texture, 32, 215));
+    var region = Game.atlas.getRegion('column.png');
     for(var i = 0; i < this.columns.length; i++) {
       var col = this.columns[i];
       col.offset.setV(region.offset);

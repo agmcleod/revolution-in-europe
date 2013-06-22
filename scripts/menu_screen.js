@@ -1,17 +1,33 @@
 Game.MenuScreen = me.ScreenObject.extend({
   init: function() {
+    this.z = 0;
     this.parent(true);
   },
 
   draw: function(ctx) {
-    this.parent(ctx);
     me.video.clearSurface(ctx, '#000');
-    if(this.showChapters) {
-      this.drawChapterSelection(ctx);
-    }
-    else {
-      this.drawIntro(ctx);
-    }
+    this.parent(ctx);
+    var x = me.video.getSystemCanvas().width / 2;
+    switch(this.state) {
+      case 0:
+        this.drawIntro(ctx);
+        break;
+      case 1:
+        this.font.draw(ctx, 'Aaron is a friend of Kevin.', x, 30);
+        this.font.draw(ctx, 'Kevin invited him on this trip, a few months before', x, 55);
+        this.font.draw(ctx, 'planning begun. Not the most athletic, but quick witted.', x, 80);
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 5:
+        this.drawChapterSelection(ctx);
+        break;
+
+    };
   },
 
   drawChapterSelection: function(ctx) {
@@ -36,31 +52,61 @@ Game.MenuScreen = me.ScreenObject.extend({
   onDestroyEvent: function() {
     me.input.unbindTouch();
     me.input.unbindKey(me.input.KEY.ENTER);
-    for(var i = 0; i < this.chapters.length; i++) {
-      var btn = this.chapters[i];
-      me.game.remove(btn);
-    }
+    me.game.removeAll();
   },
 
   onResetEvent: function() {
-    this.font = new me.Font('Xolonium', '15px', '#fff', 'center');
+    this.font = new me.Font('Xolonium', '14px', '#fff', 'center');
     this.showChapters = false;
 
-    me.input.bindKey(me.input.KEY.ENTER, 'next');
-    me.input.bindTouch(me.input.KEY.ENTER);
-
-    this.showChapters = false;
+    me.input.bindKey(me.input.KEY.ENTER, 'next', true);
+    me.input.bindTouch(me.input.KEY.ENTER, true);
+    this.state = 0;
     this.chapters = [
       new Game.ChapterButton(50, 70, 200, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 0)
+    ];
+
+    this.setupPlayerSprites();
+  },
+
+  setupPlayerSprites: function() {
+    this.players = [ //me.SpriteObject(200, 235, Game.atlas.texture, 64, 128)
+      new Game.Character(200, 235, 0),
+      new Game.Character(200, 235, 1),
+      new Game.Character(200, 235, 2),
+      new Game.Character(200, 235, 3)
     ];
   },
 
   update: function() {
-    if(me.input.isKeyPressed('next') && !this.showChapters) {
-      var _this = this;
-      this.showChapters = true;
-      me.game.add(this.chapters[0]);
-      me.game.sort();
+    if(me.input.isKeyPressed('next') && this.state < 5) {
+      this.state++;
+      switch(this.state) {
+        case 1:
+          me.game.add(this.players[0], 100);
+          me.game.sort();
+          break;
+        case 2:
+          me.game.remove(this.players[0]);
+          me.game.add(this.players[1], 100);
+          me.game.sort();
+          break;
+        case 3:
+          me.game.remove(this.players[1]);
+          me.game.add(this.players[2], 100);
+          me.game.sort();
+          break;
+        case 4:
+          me.game.remove(this.players[2]);
+          me.game.add(this.players[3], 100);
+          me.game.sort();
+          break;
+        case 5:
+          me.game.remove(this.players[3]);
+          me.game.add(this.chapters[0]);
+          me.game.sort();
+          break;
+      };
     }
     return true;
   }

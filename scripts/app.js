@@ -31,6 +31,7 @@ Game.Loader = (function() {
   Loader.prototype.loaded = function() {
     me.state.set(me.state.MENU, new Game.MenuScreen());
     me.state.change(me.state.MENU);
+    Game.atlas = new me.TextureAtlas(me.loader.getJSON("ch1"), me.loader.getImage("ch1"));
   }
 
   return Loader;
