@@ -14,6 +14,18 @@ Game.Loader = (function() {
       name: 'dialog',
       type: 'image',
       src: 'assets/images/dialog.png'
+    }, {
+      name: 'metatiles32x32',
+      type: 'image',
+      src: 'assets/maps/metatiles32x32.png'
+    }, {
+      name: 'stairs',
+      type: 'image',
+      src: 'assets/maps/stairs.png'
+    }, {
+      name: 'race',
+      type: 'tmx',
+      src: 'assets/maps/race.json'
     }];
   }
 
