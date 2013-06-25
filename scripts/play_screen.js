@@ -99,8 +99,10 @@ Game.PlayScreen = me.ScreenObject.extend({
         var player = this.players[i];
         me.game.add(player, 30);
       }
+      var _this = this;
       Game.dialog(this.startDialog, function() {
-        me.game.viewport.follow(this.players[0]);
+        _this.players[0].pos.y = (29 * 32) - _this.players[0].width;
+        me.game.viewport.follow(_this.players[0], me.game.viewport.AXIS.BOTH);
         me.levelDirector.loadLevel("race");
       });
       me.game.sort();
