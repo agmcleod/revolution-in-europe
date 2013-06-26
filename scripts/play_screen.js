@@ -8,10 +8,8 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.shannonFont = new me.Font("Verdana", 14, '#fff67e');
   },
   addTrain: function() {
-    this.train = new me.SpriteObject(-500, 72, Game.atlas.texture, 480, 192);
-    region = Game.atlas.getRegion('subway.png');
-    this.train.offset.setV(region.offset)
-    this.train._sourceAngle = region.angle;
+    this.train = Game.atlas.createSpriteFromName('subway.png');
+    this.train.pos = new me.Vector2d(-500, 72);
   },
   onDestroyEvent: function() {
     me.input.unbindTouch();
@@ -63,24 +61,19 @@ Game.PlayScreen = me.ScreenObject.extend({
   },
 
   setupBackground: function() {
-    this.background = new me.SpriteObject(0, 0, Game.atlas.texture, 480, 320);
-    var region = Game.atlas.getRegion('tube.png');
-    this.background.offset.setV(region.offset);
-    this.background._sourceAngle = region.angle;
+    this.background = Game.atlas.createSpriteFromName('tube.png');
+    this.background.pos = new me.Vector2d(0, 0);
     me.game.add(this.background, 0);
   },
 
   setupColumns: function() {
-    this.columns = [];
-    this.columns.push(new me.SpriteObject(90, 64, Game.atlas.texture, 32, 215));
-    this.columns.push(new me.SpriteObject(370, 64, Game.atlas.texture, 32, 215));
-    var region = Game.atlas.getRegion('column.png');
-    for(var i = 0; i < this.columns.length; i++) {
-      var col = this.columns[i];
-      col.offset.setV(region.offset);
-      col._sourceAngle = region.angle;
-      me.game.add(col, 20);
-    }
+    var colOne = Game.atlas.createSpriteFromName('column.png');
+    colOne.pos = new me.Vector2d(90, 64);
+    var colTwo = Game.atlas.createSpriteFromName('column.png');
+    colTwo.pos = new me.Vector2d(370, 64);
+    this.columns = [colOne, colTwo];
+    me.game.add(colOne, 20);
+    me.game.add(colTwo, 20);
   },
 
   setupInput: function() {
