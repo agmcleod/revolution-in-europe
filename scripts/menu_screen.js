@@ -54,7 +54,8 @@ Game.MenuScreen = me.ScreenObject.extend({
   },
 
   loadPlayScreen: function(chapterNumber) {
-    me.state.set(me.state.PLAY, new Game.PlayScreen(chapterNumber));
+    Game.playScreen = new Game.PlayScreen(chapterNumber);
+    me.state.set(me.state.PLAY, Game.playScreen);
     me.state.change(me.state.PLAY);
   },
 

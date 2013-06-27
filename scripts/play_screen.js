@@ -11,6 +11,11 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.train = Game.atlas.createSpriteFromName('subway.png');
     this.train.pos = new me.Vector2d(-500, 72);
   },
+  loadRace: function() {
+    me.game.remove(this.columns[0]);
+    me.game.remove(this.columns[1]);
+    this.race = new Game.Race();
+  },
   onDestroyEvent: function() {
     me.input.unbindTouch();
     me.input.unbindKey(me.input.KEY.ENTER);
@@ -94,9 +99,7 @@ Game.PlayScreen = me.ScreenObject.extend({
       }
       var _this = this;
       Game.dialog(this.startDialog, function() {
-        _this.players[0].pos.y = (29 * 32) - _this.players[0].width;
-        me.game.viewport.follow(_this.players[0], me.game.viewport.AXIS.BOTH);
-        me.levelDirector.loadLevel("race");
+        _this.loadRace();
       });
       me.game.sort();
     }
