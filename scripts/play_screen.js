@@ -97,12 +97,13 @@ Game.PlayScreen = me.ScreenObject.extend({
         var player = this.players[i];
         me.game.add(player, 30);
       }
+      me.game.sort();
       var _this = this;
       Game.dialog(this.startDialog, function() {
         _this.loadRace();
       });
-      me.game.sort();
     }
+    console.log('update');
 
     return true;
   }
