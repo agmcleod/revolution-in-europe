@@ -34,6 +34,9 @@ Game.Loader = (function() {
       alert('please use a browser that supports the canvas');
     }
     else {
+      if (document.location.hash === "#debug") {
+        me.debug.renderHitBox = true;
+      }
       me.loader.onload = this.loaded.bind(this);
       me.loader.preload(this.resources);
       me.state.change(me.state.LOADING);

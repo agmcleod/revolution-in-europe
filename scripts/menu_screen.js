@@ -75,18 +75,19 @@ Game.MenuScreen = me.ScreenObject.extend({
     me.input.bindTouch(me.input.KEY.ENTER, true);
     this.state = 0;
     this.chapters = [
-      new Game.ChapterButton(50, 70, 200, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 0)
+      new Game.ChapterButton(50, 70, 120, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 0)
     ];
 
     this.setupPlayerSprites();
   },
 
   setupPlayerSprites: function() {
-    this.players = [ //me.SpriteObject(200, 235, Game.atlas.texture, 64, 128)
-      new Game.Character(200, 235, 0),
-      new Game.Character(200, 235, 1),
-      new Game.Character(200, 235, 2),
-      new Game.Character(200, 235, 3)
+    var viewportHeight = me.game.viewport.getHeight();
+    this.players = [
+      new Game.Character(200, viewportHeight - 148, 0),
+      new Game.Character(200, viewportHeight - 148, 1),
+      new Game.Character(200, viewportHeight - 148, 2),
+      new Game.Character(200, viewportHeight - 148, 3)
     ];
   },
 

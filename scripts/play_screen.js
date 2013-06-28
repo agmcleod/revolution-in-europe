@@ -1,6 +1,6 @@
 Game.PlayScreen = me.ScreenObject.extend({
   init: function() {
-    this.parent(true);
+    this.parent(true, true);
     this.addedPlayers = false;
     this.aaronFont = new me.Font("Verdana", 14, '#1d8a00');
     this.kevinFont = new me.Font("Verdana", 14, '#00b3e0');
@@ -10,10 +10,9 @@ Game.PlayScreen = me.ScreenObject.extend({
   addTrain: function() {
     this.train = Game.atlas.createSpriteFromName('subway.png');
     this.train.pos = new me.Vector2d(-500, 72);
+    me.game.add(this.train, 10);
   },
   loadRace: function() {
-    me.game.remove(this.columns[0]);
-    me.game.remove(this.columns[1]);
     this.race = new Game.Race();
   },
   onDestroyEvent: function() {
@@ -29,12 +28,7 @@ Game.PlayScreen = me.ScreenObject.extend({
 
     this.setupInput();
 
-    this.players = [
-      new Game.Character(100, 240, 0),
-      new Game.Character(170, 240, 1),
-      new Game.Character(240, 235, 2),
-      new Game.Character(310, 240, 3)
-    ];
+    this.setupPlayers()
 
     this.players[2].flipX(true);
     this.players[3].flipX(true);
@@ -60,8 +54,7 @@ Game.PlayScreen = me.ScreenObject.extend({
       text: "You always out ran me as a kid. Bring it!",
       font: this.aaronFont
     }];
-
-    me.game.add(this.train, 10);
+    
     me.game.sort();
   },
 
@@ -87,6 +80,16 @@ Game.PlayScreen = me.ScreenObject.extend({
     me.input.bindTouch(me.input.KEY.E, true);
   },
 
+  setupPlayers: function() {
+    var viewportHeight = me.game.viewport.getHeight();
+    this.players = [
+      new Game.Player(100, viewportHeight - 148),
+      new Game.Character(170, viewportHeight - 148, 1),
+      new Game.Character(240, viewportHeight - 148, 2),
+      new Game.Character(310, viewportHeight - 148, 3)
+    ];
+  },
+
   update: function() {
     if(this.train.pos.x < -20) {
       this.train.pos.x += 10;
@@ -103,7 +106,6 @@ Game.PlayScreen = me.ScreenObject.extend({
         _this.loadRace();
       });
     }
-    console.log('update');
 
     return true;
   }
