@@ -109,6 +109,39 @@ Game.IntroScene = Game.Scene.extend({
 
 Game.AfterRaceScene = Game.Scene.extend({
   init: function(i) {
+    this.parent(this.setupDialogues(i));
+    this.background = Game.atlas.createSpriteFromName('outside-london.png');
+    this.undergroundExitWall = Game.atlas.createSpriteFromName('underground-exit-wall.png');
+    this.undergroundExitWall.anchorPoint.set(0, 0);
+    this.undergroundExitWall.pos.x = 62;
+    this.undergroundExitWall.pos.y = 200;
+    this.playersMoving = true;
+  },
+
+  load: function() {
+    this.parent();
+    var players = Game.playScreen.players;
+    var viewportHeight = me.game.viewport.getHeight();
+    players[0].makeStill();
+    players[1].makeStill();
+    players[2].visible = false;
+    players[3].visible = false;
+
+    players[0].pos.x = 270;
+    players[0].pos.y = viewportHeight - 148;
+    players[1].pos.x = 310;
+    players[1].pos.y = viewportHeight - 148;
+    players[2].pos.x = 270;
+    players[2].pos.y = viewportHeight - 148;
+    players[3].pos.x = 310;
+    players[3].pos.y = viewportHeight - 148;
+
+    me.game.add(this.background, 1);
+    me.game.add(this.undergroundExitWall, 40);
+    me.game.sort();
+  },
+
+  setupDialogues: function(i) {
     var first = {};
     var _this = this;
     if(i == 0) {
@@ -153,28 +186,20 @@ Game.AfterRaceScene = Game.Scene.extend({
       Game.playScreen.players[3].visible = true;
       Game.dialog(second.dialogue, second.callback);
     }
-    var dialogues = [first, second];
-    this.parent(dialogues);
+    return [first, second];
   },
 
-  load: function() {
+  update: function() {
     this.parent();
-    this.startDialogue = true;
     var players = Game.playScreen.players;
-    var viewportHeight = me.game.viewport.getHeight();
-    players[0].makeStill();
-    players[1].makeStill();
-    players[2].visible = false;
-    players[3].visible = false;
-
-    players[0].pos.x = 40;
-    players[0].pos.y = viewportHeight - 148;
-    players[1].pos.x = 110;
-    players[1].pos.y = viewportHeight - 148;
-    players[2].pos.x = 180;
-    players[2].pos.y = viewportHeight - 148;
-    players[3].pos.x = 250;
-    players[3].pos.y = viewportHeight - 148;
+    if(this.playersMoving) {
+      players[0].pos.x += 10;
+      players[1].pos.x += 10;
+      if(players[0].pos.x >= 350) {
+        this.playersMoving = false;
+        this.startDialogue = true;
+      }
+    }
   }
 });
 
@@ -191,5 +216,9 @@ Game.ThatsAll = Game.Scene.extend({
 
   load: function() {
     this.startDialogue = true;
+    me.game.remove(Game.playScreen.players[0]);
+    me.game.remove(Game.playScreen.players[1]);
+    me.game.remove(Game.playScreen.players[2]);
+    me.game.remove(Game.playScreen.players[3]);
   }
 })

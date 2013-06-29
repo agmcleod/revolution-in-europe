@@ -2,7 +2,7 @@
 
 {
 	"filename": "aaron.png",
-	"frame": {"x":349,"y":518,"w":28,"h":122},
+	"frame": {"x":337,"y":874,"w":28,"h":122},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":6,"w":28,"h":122},
@@ -10,7 +10,7 @@
 },
 {
 	"filename": "column.png",
-	"frame": {"x":2,"y":518,"w":32,"h":215},
+	"frame": {"x":207,"y":840,"w":32,"h":215},
 	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":215},
@@ -18,7 +18,7 @@
 },
 {
 	"filename": "kevin.png",
-	"frame": {"x":343,"y":548,"w":28,"h":122},
+	"frame": {"x":331,"y":904,"w":28,"h":122},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
@@ -26,15 +26,23 @@
 },
 {
 	"filename": "lei.png",
-	"frame": {"x":219,"y":518,"w":28,"h":128},
+	"frame": {"x":207,"y":874,"w":28,"h":128},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":0,"w":28,"h":128},
 	"sourceSize": {"w":64,"h":128}
 },
 {
+	"filename": "outside-london.png",
+	"frame": {"x":2,"y":324,"w":480,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":320},
+	"sourceSize": {"w":480,"h":320}
+},
+{
 	"filename": "shannon.png",
-	"frame": {"x":219,"y":548,"w":28,"h":122},
+	"frame": {"x":207,"y":904,"w":28,"h":122},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
@@ -42,7 +50,7 @@
 },
 {
 	"filename": "subway.png",
-	"frame": {"x":2,"y":324,"w":478,"h":192},
+	"frame": {"x":2,"y":646,"w":478,"h":192},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":0,"w":478,"h":192},
@@ -55,14 +63,22 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":320},
 	"sourceSize": {"w":480,"h":320}
+},
+{
+	"filename": "underground-exit-wall.png",
+	"frame": {"x":2,"y":840,"w":203,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":203,"h":96},
+	"sourceSize": {"w":203,"h":96}
 }],
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker ",
 	"version": "1.0",
 	"image": "ch1.png",
 	"format": "RGBA8888",
-	"size": {"w":484,"h":578},
+	"size": {"w":484,"h":938},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:f7a590c51bebc9613d899e9c093ba07a$"
+	"smartupdate": "$TexturePacker:SmartUpdate:648225761148ea3f93745dbc8c4189e6$"
 }
 }
