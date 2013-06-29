@@ -6,6 +6,9 @@ Game.Character = me.ObjectEntity.extend({
     this.renderable.addAnimation('idle', [index]);
     this.renderable.setCurrentAnimation('idle');
     this.anchorPoint.set(0, 0);
+    this.collidable = false;
+    this.setVelocity(4, 0);
+    this.updateColRect(0, 26, 0, 122);
   },
 
   getWidth: function() {
@@ -16,8 +19,21 @@ Game.Character = me.ObjectEntity.extend({
     return 128;
   },
 
+  makeStill: function() {
+    this.collidable = false;
+    this.alwaysUpdate = false;
+  },
+
+  setCollidable: function() {
+    this.collidable = true;
+    this.collisionMap = me.game.collisionMap;
+    this.alwaysUpdate = true;
+  },
+
   update: function() {
     this.parent();
+    if(this.collidable)
+      this.updateMovement();
     return true;
   }
 });

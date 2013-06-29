@@ -1,14 +1,7 @@
 Game.Player = Game.Character.extend({
   init: function(x, y) {
     this.parent(x, y, 0);
-    this.collidable = false;
-    this.setVelocity(5, 0);
-    this.updateColRect(0, 26, -1, 0);
-  },
-
-  setCollidable: function() {
-    this.collidable = true;
-    this.collisionMap = me.game.collisionMap;
+    this.setVelocity(4.5, 0);
   },
 
   update: function() {
@@ -19,8 +12,6 @@ Game.Player = Game.Character.extend({
     else {
       this.vel.x = 0;
     }
-    if(this.collidable)
-      this.updateMovement();
     return true;
   }
 });
