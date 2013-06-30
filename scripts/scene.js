@@ -108,8 +108,8 @@ Game.IntroScene = Game.Scene.extend({
 });
 
 Game.AfterRaceScene = Game.Scene.extend({
-  init: function(i) {
-    this.parent(this.setupDialogues(i));
+  init: function() {
+    this.parent();
     this.background = Game.atlas.createSpriteFromName('outside-london.png');
     this.undergroundExitWall = Game.atlas.createSpriteFromName('underground-exit-wall.png');
     this.undergroundExitWall.anchorPoint.set(0, 0);
@@ -127,9 +127,9 @@ Game.AfterRaceScene = Game.Scene.extend({
     players[2].visible = false;
     players[3].visible = false;
 
-    players[0].pos.x = 270;
+    players[0].pos.x = 250;
     players[0].pos.y = viewportHeight - 148;
-    players[1].pos.x = 310;
+    players[1].pos.x = 280;
     players[1].pos.y = viewportHeight - 148;
     players[2].pos.x = 270;
     players[2].pos.y = viewportHeight - 148;
@@ -169,7 +169,11 @@ Game.AfterRaceScene = Game.Scene.extend({
     var second = {
       dialogue: [{
         name: "Shannon",
-        text: "It's so beautiful out here, you guys done being kids?",
+        text: "It's so beautiful out here.",
+        font: Game.playScreen.shannonFont
+      }, {
+        name: "Shannon",
+        text: "So are you two done being kids?",
         font: Game.playScreen.shannonFont
       }, {
         name: "Aaron",
@@ -186,15 +190,15 @@ Game.AfterRaceScene = Game.Scene.extend({
       Game.playScreen.players[3].visible = true;
       Game.dialog(second.dialogue, second.callback);
     }
-    return [first, second];
+    this.dialogues = [first, second];
   },
 
   update: function() {
     this.parent();
     var players = Game.playScreen.players;
     if(this.playersMoving) {
-      players[0].pos.x += 10;
-      players[1].pos.x += 10;
+      players[0].pos.x += 3;
+      players[1].pos.x += 3;
       if(players[0].pos.x >= 350) {
         this.playersMoving = false;
         this.startDialogue = true;
@@ -206,6 +210,8 @@ Game.AfterRaceScene = Game.Scene.extend({
 Game.ThatsAll = Game.Scene.extend({
   init: function() {
     this.font = new me.Font('Verdana', 14, '#c00');
+    this.background = Game.atlas.createSpriteFromName('asleep.png');
+    this.background.alpha = 0.5;
     this.parent([{
       dialogue: [{name: 'Developer', text: 'Thats all for now, thanks for playing', font: this.font}],
       callback: function() {
@@ -220,5 +226,6 @@ Game.ThatsAll = Game.Scene.extend({
     me.game.remove(Game.playScreen.players[1]);
     me.game.remove(Game.playScreen.players[2]);
     me.game.remove(Game.playScreen.players[3]);
+    me.game.add(this.background, 1);
   }
 })

@@ -2,15 +2,23 @@
 
 {
 	"filename": "aaron.png",
-	"frame": {"x":337,"y":874,"w":28,"h":122},
+	"frame": {"x":337,"y":1196,"w":28,"h":122},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":6,"w":28,"h":122},
 	"sourceSize": {"w":64,"h":128}
 },
 {
+	"filename": "asleep.png",
+	"frame": {"x":2,"y":646,"w":480,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":320},
+	"sourceSize": {"w":480,"h":320}
+},
+{
 	"filename": "column.png",
-	"frame": {"x":207,"y":840,"w":32,"h":215},
+	"frame": {"x":207,"y":1162,"w":32,"h":215},
 	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":215},
@@ -18,7 +26,7 @@
 },
 {
 	"filename": "kevin.png",
-	"frame": {"x":331,"y":904,"w":28,"h":122},
+	"frame": {"x":331,"y":1226,"w":28,"h":122},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
@@ -26,7 +34,7 @@
 },
 {
 	"filename": "lei.png",
-	"frame": {"x":207,"y":874,"w":28,"h":128},
+	"frame": {"x":207,"y":1196,"w":28,"h":128},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":0,"w":28,"h":128},
@@ -42,7 +50,7 @@
 },
 {
 	"filename": "shannon.png",
-	"frame": {"x":207,"y":904,"w":28,"h":122},
+	"frame": {"x":207,"y":1226,"w":28,"h":122},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
@@ -50,7 +58,7 @@
 },
 {
 	"filename": "subway.png",
-	"frame": {"x":2,"y":646,"w":478,"h":192},
+	"frame": {"x":2,"y":968,"w":478,"h":192},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":0,"w":478,"h":192},
@@ -66,7 +74,7 @@
 },
 {
 	"filename": "underground-exit-wall.png",
-	"frame": {"x":2,"y":840,"w":203,"h":96},
+	"frame": {"x":2,"y":1162,"w":203,"h":96},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":203,"h":96},
@@ -77,8 +85,8 @@
 	"version": "1.0",
 	"image": "ch1.png",
 	"format": "RGBA8888",
-	"size": {"w":484,"h":938},
+	"size": {"w":484,"h":1260},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:648225761148ea3f93745dbc8c4189e6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:4c6c6b7959bef2c1f36e3b6b20baea92$"
 }
 }

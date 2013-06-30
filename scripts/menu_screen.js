@@ -14,7 +14,7 @@ Game.MenuScreen = me.ScreenObject.extend({
         break;
       case 1:
         this.font.draw(ctx, 'Aaron is a friend of Kevin.', x, 30);
-        this.font.draw(ctx, 'Kevin invited him on this trip, a few months before', x, 55);
+        this.font.draw(ctx, 'Kevin invited him on this trip a few months before', x, 55);
         this.font.draw(ctx, 'planning begun. Not the most athletic, but quick witted.', x, 80);
         break;
       case 2:
