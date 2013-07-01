@@ -9,30 +9,30 @@ Game.MenuScreen = me.ScreenObject.extend({
     this.parent(ctx);
     var x = me.video.getSystemCanvas().width / 2;
     switch(this.state) {
-      case 0:
+      case 1:
         this.drawIntro(ctx);
         break;
-      case 1:
+      case 2:
         this.font.draw(ctx, 'Aaron is a friend of Kevin.', x, 30);
         this.font.draw(ctx, 'Kevin invited him on this trip a few months before', x, 55);
         this.font.draw(ctx, 'planning begun. Not the most athletic, but quick witted.', x, 80);
         break;
-      case 2:
+      case 3:
         this.font.draw(ctx, 'Kevin came up with the trip idea.', x, 30);
         this.font.draw(ctx, 'Always has a fun attitude, and lots of energy.', x, 55);
         this.font.draw(ctx, 'Invited Lei & Shannon to come along.', x, 80);
         break;
-      case 3:
+      case 4:
         this.font.draw(ctx, 'Lei is a bit quieter', x, 30);
         this.font.draw(ctx, 'Not quite as energetic as Aaron or Kevin,', x, 55);
         this.font.draw(ctx, 'but stands a bit taller, and gets along quite happily', x, 80);
         break;
-      case 4:
+      case 5:
         this.font.draw(ctx, 'Shannon is the more sensible one.', x, 30);
         this.font.draw(ctx, 'She is the only one that remembers some French', x, 55);
         this.font.draw(ctx, 'since highschool.', x, 80);
         break;
-      case 5:
+      case 6:
         this.drawChapterSelection(ctx);
         break;
 
@@ -77,6 +77,8 @@ Game.MenuScreen = me.ScreenObject.extend({
     this.chapters = [
       new Game.ChapterButton(50, 70, 120, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 0)
     ];
+    this.introBackground = Game.atlas.createSpriteFromName('rie.png');
+    me.game.add(this.introBackground, 1);
 
     this.setupPlayerSprites();
   },
@@ -92,29 +94,32 @@ Game.MenuScreen = me.ScreenObject.extend({
   },
 
   update: function() {
-    if(me.input.isKeyPressed('next') && this.state < 5) {
+    if(me.input.isKeyPressed('next') && this.state < 6) {
       this.state++;
       switch(this.state) {
-        case 1:
+        case 1: 
+          me.game.remove(this.introBackground);
+          break;
+        case 2:
           me.game.add(this.players[0], 100);
           me.game.sort();
           break;
-        case 2:
+        case 3:
           me.game.remove(this.players[0]);
           me.game.add(this.players[1], 100);
           me.game.sort();
           break;
-        case 3:
+        case 4:
           me.game.remove(this.players[1]);
           me.game.add(this.players[2], 100);
           me.game.sort();
           break;
-        case 4:
+        case 5:
           me.game.remove(this.players[2]);
           me.game.add(this.players[3], 100);
           me.game.sort();
           break;
-        case 5:
+        case 6:
           me.game.remove(this.players[3]);
           me.game.add(this.chapters[0]);
           me.game.sort();
