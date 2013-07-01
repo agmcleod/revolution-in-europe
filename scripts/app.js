@@ -2,6 +2,7 @@ var Game = {};
 
 Game.Loader = (function() {
   var Loader = function() {
+    me.audio.init("mp3,ogg");
     this.resources = [{
       name: 'ch1',
       type:'json',
@@ -26,6 +27,10 @@ Game.Loader = (function() {
       name: 'race',
       type: 'tmx',
       src: 'assets/maps/race.json'
+    }, {
+      name: 'euloop',
+      type: 'audio',
+      src: 'assets/sound/'
     }];
   }
 

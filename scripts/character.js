@@ -7,7 +7,7 @@ Game.Character = me.ObjectEntity.extend({
     this.renderable.setCurrentAnimation('idle');
     this.anchorPoint.set(0, 0);
     this.collidable = false;
-    this.setVelocity(4, 0);
+    this.setVelocity(3, 0);
     this.updateColRect(0, 26, 0, 122);
   },
 

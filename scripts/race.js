@@ -29,7 +29,7 @@ Game.Race = Object.extend({
     players[2].flipX(false);
     players[3].flipX(false);
     this.initRace = true;
-    this.countdown = 3000;
+    this.countdown = 6000;
     this.loadTime = me.timer.getTime();
     
     this.raceEndPoint = me.game.currentLevel.width - 5; // 5 pixels buffer
@@ -38,7 +38,7 @@ Game.Race = Object.extend({
   },
 
   setupControls: function() {
-    me.input.bindKey(me.input.KEY.RIGHT, 'right');
+    me.input.bindKey(me.input.KEY.RIGHT, 'right', true);
     me.input.bindTouch(me.input.KEY.RIGHT);
   },
 
@@ -68,15 +68,19 @@ Game.Race = Object.extend({
       }
     }
     else {
-      me.game.HUD.setItemValue('countdown', Math.ceil(this.countdown / 1000));
-      this.countdown = 3000 - (me.timer.getTime() - this.loadTime);
+      var value = Math.ceil(this.countdown / 1000);
+      if(value > 3) {
+        value = me.sys.isMobile ? 'Tap to have Aaron run.' : 'Click your left mouse or right arrow to run.';
+      }
+      me.game.HUD.setItemValue('countdown', value);
+      this.countdown = 6000 - (me.timer.getTime() - this.loadTime);
     }
   }
 });
 
 Game.CountDown = me.HUD_Item.extend({
   init: function() {
-    this.font = new me.Font('Arial', 32, '#c00');
+    this.font = new me.Font('Arial', 22, '#c00', 'center');
     this.parent(me.video.getWidth() / 2, me.video.getHeight() / 2);
   },
   draw: function(ctx, x, y) {

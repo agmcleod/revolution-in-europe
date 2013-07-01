@@ -18,6 +18,7 @@ Game.PlayScreen = me.ScreenObject.extend({
   onDestroyEvent: function() {
     me.input.unbindTouch();
     me.input.unbindKey(me.input.KEY.ENTER);
+    me.audio.stopTrack('euloop');
   },
   onResetEvent: function() {
     this.setupPlayers()
@@ -26,6 +27,7 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.players[3].flipX(true);
 
     this.setupScenes();
+    me.audio.playTrack('euloop');
   },
 
   setupPlayers: function() {
