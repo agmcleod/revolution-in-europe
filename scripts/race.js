@@ -32,7 +32,7 @@ Game.Race = Object.extend({
     this.countdown = 6000;
     this.loadTime = me.timer.getTime();
     
-    this.raceEndPoint = me.game.currentLevel.width - 5; // 5 pixels buffer
+    this.raceEndPoint = me.game.currentLevel.width - 10;
     me.game.addHUD(0, 0, me.video.getWidth(), me.video.getHeight());
     me.game.HUD.addItem("countdown", this.countdownHUD);
   },
@@ -55,9 +55,9 @@ Game.Race = Object.extend({
         this.initRace = false;
         players[0].setCollidable();
         players[1].setCollidable();
-        players[1].vel.x += players[1].accel.x * me.timer.tick;
         me.game.HUD.removeItem('countdown');
       }
+      players[1].vel.x += players[1].accel.x * me.timer.tick;
       
       if(players[0].pos.x + players[0].collisionBox.width >= this.raceEndPoint) {
         if(typeof this.winner === 'undefined') this.setWinner(0);
