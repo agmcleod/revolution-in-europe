@@ -3,7 +3,8 @@ Game.PlayScreen = me.ScreenObject.extend({
     me.video.clearSurface(ctx, '#000');
     this.parent(ctx);
   },
-  init: function() {
+  init: function(chapter) {
+    this.initialChapter = chapter;
     this.parent(true, true);
     this.addedPlayers = false;
     this.aaronFont = new me.Font("Verdana", 14, '#1d8a00');
@@ -11,6 +12,12 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.leiFont = new me.Font("Verdana", 14, '#ffd08a');
     this.shannonFont = new me.Font("Verdana", 14, '#fff67e');
     this.z = 0;
+  },
+  loadChapter: function(n) {
+    var scene = this.chapters[n-1].startScene;
+    var cs = this.scenes[this.currentScene];
+    if(cs) cs.cleanup();
+    this.setScene(scene);
   },
   loadRace: function() {
     this.setScene(1);
@@ -27,17 +34,11 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.players[3].flipX(true);
 
     this.setupScenes();
+    this.chapters = [{
+      startScene: 0
+    }];
+    this.loadChapter(this.initialChapter);
     me.audio.playTrack('euloop');
-  },
-
-  setupPlayers: function() {
-    var viewportHeight = me.game.viewport.getHeight();
-    this.players = [
-      new Game.Player(100, viewportHeight - 148),
-      new Game.Character(170, viewportHeight - 148, 1),
-      new Game.Character(240, viewportHeight - 148, 2),
-      new Game.Character(310, viewportHeight - 148, 3)
-    ];
   },
 
   setScene: function(n) {
@@ -45,14 +46,23 @@ Game.PlayScreen = me.ScreenObject.extend({
     this.scenes[n].load();
   },
 
+  setupPlayers: function() {
+    var viewportHeight = me.game.viewport.getHeight();
+    this.players = [
+      new Game.Player(100, viewportHeight - 148),
+      new Game.Kevin(170, viewportHeight - 148),
+      new Game.Lei(240, viewportHeight - 148),
+      new Game.Shannon(310, viewportHeight - 148)
+    ];
+  },
+
   setupScenes: function() {
     this.scenes = [
       new Game.IntroScene(),
       new Game.Race(),
       new Game.AfterRaceScene(),
-      new Game.ThatsAll()
+      new Game.Asleep()
     ];
-    this.setScene(0);
   },
 
   update: function() {

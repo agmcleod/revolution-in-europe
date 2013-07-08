@@ -49,9 +49,17 @@ Game.Loader = (function() {
   }
 
   Loader.prototype.loaded = function() {
-    me.state.set(me.state.MENU, new Game.MenuScreen());
-    me.state.change(me.state.MENU);
     Game.atlas = new me.TextureAtlas(me.loader.getJSON("ch1"), me.loader.getImage("ch1"));
+    if(document.location.hash.indexOf('chapter') != -1) {
+      var chapterNumber = document.location.hash.split('chapter')[1];
+      Game.playScreen = new Game.PlayScreen(chapterNumber);
+      me.state.set(me.state.PLAY, Game.playScreen);
+      me.state.change(me.state.PLAY);
+    }
+    else {
+      me.state.set(me.state.MENU, new Game.MenuScreen());
+      me.state.change(me.state.MENU);  
+    }
   }
 
   return Loader;

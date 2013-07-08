@@ -207,7 +207,7 @@ Game.AfterRaceScene = Game.Scene.extend({
   }
 });
 
-Game.ThatsAll = Game.Scene.extend({
+Game.Asleep = Game.Scene.extend({
   init: function() {
     this.font = new me.Font('Verdana', 14, '#c00');
     this.background = Game.atlas.createSpriteFromName('asleep.png');

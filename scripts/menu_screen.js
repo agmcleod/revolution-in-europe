@@ -75,7 +75,7 @@ Game.MenuScreen = me.ScreenObject.extend({
     me.input.bindTouch(me.input.KEY.ENTER, true);
     this.state = 0;
     this.chapters = [
-      new Game.ChapterButton(50, 70, 120, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 0)
+      new Game.ChapterButton(50, 70, 120, 25, 'Chapter 1', 'Arial', '13px', 'white', this, 1)
     ];
     this.introBackground = Game.atlas.createSpriteFromName('rie.png');
     me.game.add(this.introBackground, 1);
@@ -86,10 +86,10 @@ Game.MenuScreen = me.ScreenObject.extend({
   setupPlayerSprites: function() {
     var viewportHeight = me.game.viewport.getHeight();
     this.players = [
-      new Game.Character(200, viewportHeight - 148, 0),
-      new Game.Character(200, viewportHeight - 148, 1),
-      new Game.Character(200, viewportHeight - 148, 2),
-      new Game.Character(200, viewportHeight - 148, 3)
+      new Game.Player(200, viewportHeight - 148),
+      new Game.Kevin(200, viewportHeight - 148),
+      new Game.Lei(200, viewportHeight - 148),
+      new Game.Shannon(200, viewportHeight - 148)
     ];
   },
 

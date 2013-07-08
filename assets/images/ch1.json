@@ -2,15 +2,15 @@
 
 {
 	"filename": "aaron.png",
-	"frame": {"x":337,"y":1518,"w":28,"h":122},
+	"frame": {"x":333,"y":1882,"w":40,"h":124},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":18,"y":6,"w":28,"h":122},
-	"sourceSize": {"w":64,"h":128}
+	"spriteSourceSize": {"x":12,"y":2,"w":40,"h":124},
+	"sourceSize": {"w":64,"h":126}
 },
 {
 	"filename": "asleep.png",
-	"frame": {"x":2,"y":968,"w":480,"h":320},
+	"frame": {"x":2,"y":1290,"w":480,"h":320},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":320},
@@ -18,27 +18,35 @@
 },
 {
 	"filename": "column.png",
-	"frame": {"x":207,"y":1484,"w":32,"h":215},
+	"frame": {"x":207,"y":1806,"w":32,"h":215},
 	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":215},
 	"sourceSize": {"w":32,"h":215}
 },
 {
+	"filename": "hall.png",
+	"frame": {"x":2,"y":968,"w":480,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":320},
+	"sourceSize": {"w":480,"h":320}
+},
+{
 	"filename": "kevin.png",
-	"frame": {"x":331,"y":1548,"w":28,"h":122},
+	"frame": {"x":333,"y":1840,"w":40,"h":124},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
-	"sourceSize": {"w":64,"h":128}
+	"spriteSourceSize": {"x":12,"y":2,"w":40,"h":124},
+	"sourceSize": {"w":64,"h":126}
 },
 {
 	"filename": "lei.png",
-	"frame": {"x":207,"y":1518,"w":28,"h":128},
+	"frame": {"x":207,"y":1882,"w":40,"h":124},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":18,"y":0,"w":28,"h":128},
-	"sourceSize": {"w":64,"h":128}
+	"spriteSourceSize": {"x":12,"y":2,"w":40,"h":124},
+	"sourceSize": {"w":64,"h":126}
 },
 {
 	"filename": "outside-london.png",
@@ -58,15 +66,15 @@
 },
 {
 	"filename": "shannon.png",
-	"frame": {"x":207,"y":1548,"w":28,"h":122},
+	"frame": {"x":207,"y":1840,"w":40,"h":124},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":17,"y":6,"w":28,"h":122},
-	"sourceSize": {"w":64,"h":128}
+	"spriteSourceSize": {"x":12,"y":2,"w":40,"h":124},
+	"sourceSize": {"w":64,"h":126}
 },
 {
 	"filename": "subway.png",
-	"frame": {"x":2,"y":1290,"w":478,"h":192},
+	"frame": {"x":2,"y":1612,"w":478,"h":192},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":0,"w":478,"h":192},
@@ -82,7 +90,7 @@
 },
 {
 	"filename": "underground-exit-wall.png",
-	"frame": {"x":2,"y":1484,"w":203,"h":96},
+	"frame": {"x":2,"y":1806,"w":203,"h":96},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":203,"h":96},
@@ -93,8 +101,8 @@
 	"version": "1.0",
 	"image": "ch1.png",
 	"format": "RGBA8888",
-	"size": {"w":484,"h":1582},
+	"size": {"w":484,"h":1924},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:f3627651ad25312632ff0870c51daca5$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c898141a47b7b42e22af0baae91ce226$"
 }
 }
