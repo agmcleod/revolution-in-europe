@@ -61,7 +61,8 @@ Game.PlayScreen = me.ScreenObject.extend({
       new Game.IntroScene(),
       new Game.Race(),
       new Game.AfterRaceScene(),
-      new Game.Asleep()
+      new Game.Asleep(),
+      new Game.LondonHallway()
     ];
   },
 

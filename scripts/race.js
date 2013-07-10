@@ -70,7 +70,7 @@ Game.Race = Object.extend({
     else {
       var value = Math.ceil(this.countdown / 1000);
       if(value > 3) {
-        value = me.sys.isMobile ? 'Tap to have Aaron run.' : 'Press the right arrow to run.';
+        value = me.sys.isMobile ? 'Tap quickly to have Aaron run.' : 'Tap the right arrow quickly to run.';
       }
       me.game.HUD.setItemValue('countdown', value);
       this.countdown = 6000 - (me.timer.getTime() - this.loadTime);

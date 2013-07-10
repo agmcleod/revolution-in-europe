@@ -118,6 +118,11 @@ Game.AfterRaceScene = Game.Scene.extend({
     this.playersMoving = true;
   },
 
+  cleanup: function() {
+    this.parent();
+    me.audio.stopTrack('euloop');
+  },
+
   load: function() {
     this.parent();
     var players = Game.playScreen.players;
@@ -209,23 +214,74 @@ Game.AfterRaceScene = Game.Scene.extend({
 
 Game.Asleep = Game.Scene.extend({
   init: function() {
-    this.font = new me.Font('Verdana', 14, '#c00');
     this.background = Game.atlas.createSpriteFromName('asleep.png');
     this.background.alpha = 0.5;
+    this.fullOpaque = false;
+    var _this = this;
     this.parent([{
-      dialogue: [{name: 'Developer', text: 'Thats all for now, thanks for playing', font: this.font}],
+      dialogue: [{name: 'Aaron', text: 'zzz...', font: Game.playScreen.aaronFont}],
       callback: function() {
-
+        _this.cleanup();
+        Game.playScreen.setScene(4);
       }
-    }])
+    }]);
+  },
+
+  cleanup: function() {
+    this.parent();
+    me.game.remove(this.background);
   },
 
   load: function() {
-    this.startDialogue = true;
+    this.parent();
     me.game.remove(Game.playScreen.players[0]);
     me.game.remove(Game.playScreen.players[1]);
     me.game.remove(Game.playScreen.players[2]);
     me.game.remove(Game.playScreen.players[3]);
     me.game.add(this.background, 1);
+    this.time = me.timer.getTime();
+    me.game.sort();
+  },
+
+  update: function() {
+    this.parent();
+    if(!this.fullOpaque && (me.timer.getTime() - this.time) > 300) {
+      this.time = me.timer.getTime();
+      this.background.alpha += 0.1;
+      if(this.background.alpha >= 1) {
+        this.fullOpaque = true;
+        this.startDialogue = true;
+      }
+    }
   }
-})
+});
+
+Game.LondonHallway = Game.Scene.extend({
+  init: function() {
+    this.background = Game.atlas.createSpriteFromName('hall.png');
+    var _this = this;
+    this.parent([{
+      dialogue: [{
+        name: 'Aaron',
+        text: 'Wha... where am i?',
+        font: Game.playScreen.aaronFont
+      },{
+        name: 'Aaron',
+        text: 'How did i get out in the hall?',
+        font: Game.playScreen.aaronFont
+      },{
+        name: 'Aaron',
+        text: 'Better find my way back to the room.',
+        font: Game.playScreen.aaronFont
+      }],
+      callback: function() {
+        _this.cleanup();
+      }
+    }]);
+  },
+
+  load: function() {
+    me.game.add(this.background, 1);
+    me.game.sort();
+  }
+});
